@@ -1,16 +1,15 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Models\DataModel;
 use Illuminate\Http\Request;
+use App\Http\Resources\DataModelResource; // Correct namespace here
 
 class DataController extends Controller
 {
     public function store(Request $request)
     {
-        // Validate the incoming request data
         $request->validate([
             'email' => 'required|email',
             'first_name' => 'nullable|string|max:255',
@@ -22,7 +21,7 @@ class DataController extends Controller
 
         // Store the validated data into the `data` table
         $data = DataModel::create([
-            'ulid' => $request->ulid,  // Ensure ULID is nullable if not provided
+            'ulid' => $request->ulid,  
             'email' => $request->email,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -31,6 +30,7 @@ class DataController extends Controller
             'phone_number' => $request->phone_number,
         ]);
 
-        return response()->json(['success' => true, 'data' => $data], 201);
+        // Return the newly created data using the DataModelResource
+        return new DataModelResource($data);
     }
 }

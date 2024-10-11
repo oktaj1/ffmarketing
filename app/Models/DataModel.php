@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\HasUlid;
 
 class DataModel extends Model
 {
-    use SoftDeletes;
+    use HasUlid;
 
-    protected $table = 'data';  // Explicitly define the table name
+    // Define the table name if necessary
+    protected $table = 'data';
 
+    // Define which fields are fillable
     protected $fillable = [
         'ulid',
         'email',
