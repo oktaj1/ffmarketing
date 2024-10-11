@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Http\Resources;
-use Illuminate\Http\Request;
+
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Controllers\DataController;
 
 class DataModelResource extends JsonResource
 {
@@ -16,8 +15,7 @@ class DataModelResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'ulid' => $this->ulid,
+            'id' => $this->ulid,
             'email' => $this->email,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
@@ -33,7 +31,7 @@ class DataModelResource extends JsonResource
      * Customize the outgoing response for the resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Http\Response $response
+     * @param  \Illuminate\Http\Response  $response
      * @return void
      */
     public function withResponse($request, $response)
