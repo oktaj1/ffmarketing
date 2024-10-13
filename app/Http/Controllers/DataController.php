@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\DataModel;
 use Illuminate\Http\Request;
-use App\Http\Resources\DataModelResource; // Correct namespace here
+use Illuminate\Support\Facades\Auth;
 
 class DataController extends Controller
 {
@@ -30,7 +31,9 @@ class DataController extends Controller
             'phone_number' => $request->phone_number,
         ]);
 
-        // Return the newly created data using the DataModelResource
-        return new DataModelResource($data);
+        // Return the newly created data using the Inertia response
+        return Inertia::render('Dashboard', [
+            'user' => Auth::user(),
+        ]);
     }
 }

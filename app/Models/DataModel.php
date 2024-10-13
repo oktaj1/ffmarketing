@@ -13,13 +13,13 @@ class DataModel extends Model
     protected $table = 'data';
 
     // Define which fields are fillable
-    protected $fillable = [
-        'ulid',
-        'email',
-        'first_name',
-        'last_name',
-        'channel',
-        'prompt',
-        'phone_number',
+    protected $guarded = [
+        // 'ulid',
+        // 'email',
+        // 'first_name',
+        // 'last_name',
+        // 'channel',
+        // 'prompt',
+        // 'phone_number',
     ];
 }
