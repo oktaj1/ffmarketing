@@ -1,35 +1,26 @@
 <?php
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DataController;
 
 Route::get('/register', function () {
     return Inertia::render('Register');
 })->name('register.show');
 
-Route::post('/register', [RegisterController::class, 'register'])->name('register');
+// routes/web.php
 
 
 
-// use Inertia\Inertia;
-// use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\Route;
-// use App\Http\Controllers\DataController;
+Route::get('/dashboard', function () {
+    return view('dashboard'); // Assuming your dashboard is located in 'resources/views/dashboard.blade.php'
+})->name('dashboard');
 
-// Route::get('/', function () {
-//     return Inertia::render('Dashboard', [
-
-//         'user' => Auth::user(),
-//     ]);
-// });
-
-// Route::post('/data', [DataController::class, 'store']);
+// Register route for form submission
+Route::post('/register', [DataController::class, 'store'])->name('register');
 
 
-// Route::get('/register', function () {
 
-    //     return Inertia::render('Register');
-    // })->name('register');
-    
-    // Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
-    
+
+// Route::get('/register', [DataController::class, 'showRegisterForm'])->name('register.show');
+// Route::post('/register', [DataController::class, 'register'])->name('register');
+// Route::get('/dashboard', [DataController::class, 'dashboard'])->name('dashboard');

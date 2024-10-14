@@ -3,11 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title inertia>{{ config('app.name', 'Laravel') }}</title>
-    @vite(['resources/js/app.js'])
-    <link rel="icon" href="{{ asset('favicon.ico') }}" />
+    <title>Dashboard</title>
 </head>
 <body>
-    @inertia
+    <h1>Welcome to your Dashboard Dear </h1>
 </body>
 </html>
