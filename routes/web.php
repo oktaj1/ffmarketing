@@ -1,26 +1,32 @@
 <?php
+
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataController;
+use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\SubscriberController;
+use App\Http\Controllers\Api\CampaignController;
+use App\Http\Controllers\Api\SettingsController;
 
-Route::get('/register', function () {
-    return Inertia::render('Register');
-})->name('register.show');
+Route::get('/', function () {
+    return Inertia::render('Welcome'); // This points to your Welcome.vue
+})->name('welcome');
 
-// routes/web.php
+// Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard'); // Your dashboard Vue component
+    })->name('dashboard');
+    
+    Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers.index');
+    Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers.index');
+    // Route::get('/channels', [ChannelController::class, 'index'])->name('channels.index');
+    Route::resource('campaigns', CampaignController::class);
+    Route::resource('channels', ChannelController::class);
 
-
-
-Route::get('/dashboard', function () {
-    return view('dashboard'); // Assuming your dashboard is located in 'resources/views/dashboard.blade.php'
-})->name('dashboard');
-
-// Register route for form submission
-Route::post('/register', [DataController::class, 'store'])->name('register');
-
-
-
-
-// Route::get('/register', [DataController::class, 'showRegisterForm'])->name('register.show');
-// Route::post('/register', [DataController::class, 'register'])->name('register');
-// Route::get('/dashboard', [DataController::class, 'dashboard'])->name('dashboard');
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/logout', function () {
+        Auth::logout();
+        return redirect('/'); // Redirect to the welcome page after logout
+    })->name('logout');
+// });
