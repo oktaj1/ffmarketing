@@ -19,7 +19,8 @@ Route::get('/', function () {
     })->name('dashboard');
     
     Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers.index');
-    Route::get('/subscribers', [SubscriberController::class, 'index'])->name('subscribers.index');
+    Route::post('/subscribers', [SubscriberController::class, 'store'])->name('subscribers.store');
+    Route::delete('/subscribers/{subscriber}', [SubscriberController::class, 'destroy'])->name('subscribers.destroy');
     // Route::get('/channels', [ChannelController::class, 'index'])->name('channels.index');
     Route::resource('campaigns', CampaignController::class);
     Route::resource('channels', ChannelController::class);

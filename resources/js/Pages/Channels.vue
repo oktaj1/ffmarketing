@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="container">
     <h1>Channels</h1>
-    <button @click="openCreateModal" class="btn btn-primary mb-3">Create New Channel</button>
+    <button class="button" @click="openCreateModal">Create New Channel</button>
 
-    <table>
+    <table class="styled-table">
       <thead>
         <tr>
           <th>ID</th>
@@ -11,6 +11,7 @@
           <th>SMS</th>
           <th>Social Media</th>
           <th>Source</th>
+          <th>Subscribers</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -21,67 +22,39 @@
           <td>{{ channel.sms ? 'Yes' : 'No' }}</td>
           <td>{{ channel.social_media ? 'Yes' : 'No' }}</td>
           <td>{{ channel.source }}</td>
+          <td>{{ channel.subscriber_count }}</td>
           <td>
-            <button @click="editChannel(channel.id)" class="btn btn-warning">Edit</button>
-            <button @click="confirmDelete(channel.id)" class="btn btn-danger">Delete</button>
+            <button class="edit-button" @click="editChannel(channel.id)">Edit</button>
+            <button class="delete-button" @click="deleteChannel(channel.id)">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
 
     <!-- Modal for creating or editing a channel -->
-    <div v-if="showModal" class="modal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">{{ editMode ? 'Edit Channel' : 'Create Channel' }}</h5>
-            <button type="button" class="close" @click="closeModal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+    <div v-if="showModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeModal">&times;</span>
+        <h2>{{ editMode ? 'Edit Channel' : 'Create Channel' }}</h2>
+        <form @submit.prevent="handleSubmit">
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="checkbox" v-model="channelData.email" />
           </div>
-          <div class="modal-body">
-            <form @submit.prevent="handleSubmit">
-              <div>
-                <label>Email:</label>
-                <input type="checkbox" v-model="channelData.email" />
-              </div>
-              <div>
-                <label>SMS:</label>
-                <input type="checkbox" v-model="channelData.sms" />
-              </div>
-              <div>
-                <label>Social Media:</label>
-                <input type="checkbox" v-model="channelData.social_media" />
-              </div>
-              <div>
-                <label>Source:</label>
-                <input type="text" v-model="channelData.source" />
-              </div>
-              <button type="submit">{{ editMode ? 'Update' : 'Create' }}</button>
-            </form>
+          <div class="form-group">
+            <label>SMS:</label>
+            <input type="checkbox" v-model="channelData.sms" />
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div v-if="showDeleteModal" class="modal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Confirm Delete</h5>
-            <button type="button" class="close" @click="closeDeleteModal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+          <div class="form-group">
+            <label>Social Media:</label>
+            <input type="checkbox" v-model="channelData.social_media" />
           </div>
-          <div class="modal-body">
-            <p>Are you sure you want to delete this channel?</p>
+          <div class="form-group">
+            <label>Source:</label>
+            <input type="text" v-model="channelData.source" required />
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeDeleteModal">Cancel</button>
-            <button type="button" class="btn btn-danger" @click="deleteChannel">Delete</button>
-          </div>
-        </div>
+          <button type="submit" class="submit-button">{{ editMode ? 'Update' : 'Create' }}</button>
+        </form>
       </div>
     </div>
   </div>
@@ -90,12 +63,11 @@
 <script>
 export default {
   props: {
-    channels: Array, // Receive channels from props
+    channels: Array, // Receive channels from props, including subscriber_count
   },
   data() {
     return {
       showModal: false,
-      showDeleteModal: false,
       editMode: false,
       channelData: {
         email: false,
@@ -103,13 +75,19 @@ export default {
         social_media: false,
         source: '',
       },
-      channelToDelete: null, // Store channel ID to delete
     };
   },
   methods: {
     openCreateModal() {
       this.editMode = false;
       this.showModal = true;
+      this.resetForm();
+    },
+    closeModal() {
+      this.showModal = false;
+      this.resetForm();
+    },
+    resetForm() {
       this.channelData = { email: false, sms: false, social_media: false, source: '' };
     },
     editChannel(id) {
@@ -118,20 +96,10 @@ export default {
       this.channelData = { ...channel };
       this.showModal = true;
     },
-    confirmDelete(id) {
-      this.channelToDelete = id; // Set the channel ID to delete
-      this.showDeleteModal = true;
-    },
-    closeDeleteModal() {
-      this.showDeleteModal = false;
-      this.channelToDelete = null; // Clear the channel ID
-    },
-    closeModal() {
-      this.showModal = false;
-    },
-    async deleteChannel() {
-      await this.$inertia.delete(`/channels/${this.channelToDelete}`);
-      this.closeDeleteModal(); // Close modal after deletion
+    async deleteChannel(id) {
+      if (confirm('Are you sure you want to delete this channel?')) {
+        await this.$inertia.delete(`/channels/${id}`);
+      }
     },
     async handleSubmit() {
       if (this.editMode) {
@@ -139,64 +107,163 @@ export default {
       } else {
         await this.$inertia.post('/channels', this.channelData);
       }
-      this.showModal = false;
+      this.closeModal();
     },
   },
 };
 </script>
 
 <style scoped>
-/* Add your CSS styling here */
-h1 {
-  font-size: 2rem;
-  color: black;
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-table {
+h1 {
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+.styled-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-th, td {
-  border: 1px solid black;
-  padding: 8px;
+.styled-table th,
+.styled-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
   text-align: left;
 }
 
-th {
-  background-color: #f2f2f2;
-}
-
-button {
-  background-color: black;
+.styled-table th {
+  background-color: #007bff;
   color: white;
-  border: none;
+}
+
+.styled-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.edit-button,
+.delete-button {
   padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  color: white;
   cursor: pointer;
-  margin-right: 5px; /* Space between buttons */
+  margin-right: 5px;
 }
 
-button:hover {
-  background-color: #555;
+.edit-button {
+  background-color: #28a745;
 }
 
+.delete-button {
+  background-color: #dc3545;
+}
+
+.edit-button:hover {
+  background-color: #218838;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+/* Modal styles */
 .modal {
-  display: block; /* Show the modal */
-  position: fixed; /* Stay in place */
-  z-index: 1050; /* Sit on top */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1000;
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
 }
+
 .modal-content {
-  background-color: white; /* White background */
-  margin: 15% auto; /* 15% from the top and centered */
+  background-color: #fff;
+  margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
+  width: 80%;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input[type="checkbox"] {
+  margin-left: 10px;
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
 }
 </style>

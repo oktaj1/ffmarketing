@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->string('channel')->nullable();
+            $table->unsignedBigInteger('channel_id'); // Ensure channel_id exists
             $table->string('phone_number')->nullable();
             $table->string('address')->nullable();
             $table->string('prompt')->nullable();
