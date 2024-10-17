@@ -5,9 +5,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SubscriberController;
-use App\Http\Controllers\Api\CampaignController;
-use App\Http\Controllers\Api\SettingsController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome'); // This points to your Welcome.vue
@@ -30,4 +30,6 @@ Route::get('/', function () {
         Auth::logout();
         return redirect('/'); // Redirect to the welcome page after logout
     })->name('logout');
+
+    Route::resource('campaigns', CampaignController::class);
 // });

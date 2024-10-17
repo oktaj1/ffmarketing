@@ -1,5 +1,12 @@
 <template>
   <div class="container">
+            <div class="button-container">
+            <button @click="navigateTo('subscribers')">Subscribers</button>
+            <button @click="navigateTo('channels')">Channels</button>
+            <button @click="navigateTo('campaigns')">Campaigns</button>
+            <button @click="navigateTo('settings')">Settings</button>
+            <button @click="logout">Logout</button>
+        </div>
     <h1>Subscribers</h1>
 
     <button class="button" @click="openCreateModal">Create New Subscriber</button>
@@ -217,6 +224,23 @@ h1 {
 
 .form-group {
   margin-bottom: 15px;
+}
+.button-container {
+    margin-top: 20px;
+}
+
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
 }
 
 label {

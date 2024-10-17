@@ -2,21 +2,32 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Campaign extends Model
 {
-    use HasFactory, SoftDeletes;
-
-    protected $table = 'campaigns'; // Adjust table name if needed
-
     protected $fillable = [
         'name',
-        'channel_id', // assuming campaigns are tied to channels
         'description',
+        'type',
         'start_date',
         'end_date',
+        'status',
+        'email_template_id', // New field for the selected email template
+        'target_audience',
+        'audience_size',
+        'lead_source',
+        'channels',
+        
     ];
+
+    protected $casts = [
+        'channels' => 'array',
+    ];
+
+    // Relationship with EmailTemplate
+    public function emailTemplate()
+    {
+        return $this->belongsTo(EmailTemplate::class);
+    }
 }

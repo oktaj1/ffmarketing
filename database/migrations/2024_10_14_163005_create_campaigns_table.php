@@ -12,8 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('campaigns', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id(); // Campaign ID
+            $table->string('name'); // Campaign Name
+            $table->text('description')->nullable(); // Campaign Description
+            $table->string('type'); // Campaign Type (e.g., email, social media)
+            $table->date('start_date'); // Start Date
+            $table->date('end_date')->nullable(); // End Date
+            $table->enum('status', ['active', 'paused', 'completed'])->default('active'); // Status
+            $table->text('target_audience')->nullable(); // Target Audience
+            $table->integer('audience_size')->nullable(); // Audience Size
+            $table->string('lead_source')->nullable(); // Lead Source
+            $table->json('channels')->nullable(); // Channels (e.g., email, SMS, etc.)
+            $table->timestamps(); // Created_at and updated_at
         });
     }
 
