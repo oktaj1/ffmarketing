@@ -13,19 +13,18 @@ class Campaign extends Model
         'start_date',
         'end_date',
         'status',
-        'email_template_id', // New field for the selected email template
+        'email_template_id',
         'target_audience',
         'audience_size',
-        'lead_source',
-        'channels',
-        
+        'lead_source'
     ];
 
-    protected $casts = [
-        'channels' => 'array',
-    ];
+    public function channels()
+    {
+        return $this->belongsToMany(Channel::class)
+            ->withTimestamps();
+    }
 
-    // Relationship with EmailTemplate
     public function emailTemplate()
     {
         return $this->belongsTo(EmailTemplate::class);

@@ -13,19 +13,12 @@ return new class extends Migration
     {
         Schema::create('email_templates', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('content'); // Email content
-            $table->timestamps();
-            $table->unsignedBigInteger('email_template_id')->nullable();
-            $table->foreign('email_template_id')->references('id')->on('email_templates');
+            $table->string('name'); 
+            $table->text('content'); 
+            $table->foreignId('campaign_id') 
+                  ->constrained()
+                  ->onDelete('cascade'); 
+            $table->timestamps(); 
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('email_templates');
     }
 };

@@ -12,12 +12,4 @@ class AddEmailTemplateIdToCampaignsTable extends Migration
             $table->foreignId('email_template_id')->nullable()->constrained();
         });
     }
-
-    public function down()
-    {
-        Schema::table('campaigns', function (Blueprint $table) {
-            $table->dropForeign(['email_template_id']);
-            $table->dropColumn('email_template_id');
-        });
-    }
 }

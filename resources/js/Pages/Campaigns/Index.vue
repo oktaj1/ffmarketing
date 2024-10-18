@@ -75,7 +75,15 @@
               </option>
             </select>
           </div>
-
+                    <div class="form-group">
+            <label for="channel">Select Channel</label>
+            <select v-model="campaignData.channel_id" id="channel" class="input-field">
+              <option value="">Select a Channel</option>
+              <option v-for="channel in channels" :key="channel.id" :value="channel.id">
+                {{ channel.id }}
+              </option>
+            </select>
+          </div>
           <div class="form-group">
             <label for="start-date">Start Date</label>
             <input v-model="campaignData.start_date" type="date" id="start-date" class="input-field" required />
@@ -104,10 +112,11 @@
 
 <script>
 export default {
-  props: {
-    campaigns: Array, // List of campaigns
-    emailTemplates: Array // Receiving email templates from the server
-  },
+props: {
+    campaigns: Array,
+    emailTemplates: Array,
+    channels: Array // Make sure this is included
+},
   data() {
     return {
       showModal: false,

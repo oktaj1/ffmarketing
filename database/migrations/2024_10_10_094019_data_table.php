@@ -11,18 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('data', function (Blueprint $table) {
-            $table->id();
-            $table->ulid('ulid')->nullable();
-            $table->string('email');
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
-            $table->string('channel');
-            $table->string('prompt')->nullable();
-            $table->string('phone_number')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
-
-        });
+        Schema::dropIfExists('data');
     }
 };

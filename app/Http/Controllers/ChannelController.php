@@ -3,59 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Models\Channel;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Requests\StoreChannelRequest;
+use App\Http\Requests\UpdateChannelRequest;
 
 class ChannelController extends Controller
 {
     public function index()
     {
-        $channels = Channel::all(); // Fetch all channels
-        return Inertia::render('Channels', ['channels' => $channels]); // Pass channels to the view
-
-        return Inertia::render('Subscribers/Index', [
-            'subscribers' => $subscribers,
-            'channels' => $channels,
-        ]);
+        $channels = Channel::withCount('subscribers')->get();
+        return Inertia::render('Channels', ['channels' => $channels]);
     }
 
-    public function store(Request $request)
+    public function store(StoreChannelRequest $request)
     {
-        // Validate incoming request
-        $validated = $request->validate([
-            'email' => 'required|boolean',
-            'sms' => 'required|boolean',
-            'social_media' => 'required|boolean',
-            'source' => 'required|string|max:255',
-        ]);
-
-        // Create a new channel
+        $validated = $request->validated();
         Channel::create($validated);
-
         return redirect()->route('channels.index');
     }
 
-    public function update(Request $request, Channel $channel)
+    public function update(UpdateChannelRequest $request, Channel $channel)
     {
-        // Validate the incoming data for updating the channel
-        $validated = $request->validate([
-            'email' => 'required|boolean',
-            'sms' => 'required|boolean',
-            'social_media' => 'required|boolean',
-            'source' => 'required|string|max:255',
-        ]);
-
-        // Update the channel with the validated data
+        $validated = $request->validated();
         $channel->update($validated);
-
         return redirect()->route('channels.index');
     }
 
     public function destroy(Channel $channel)
     {
-        // Delete the specified channel
         $channel->delete();
-
         return redirect()->route('channels.index');
     }
 }

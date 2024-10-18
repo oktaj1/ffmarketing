@@ -12,11 +12,4 @@ class AddSubscriberCountToChannelsTable extends Migration
             $table->integer('subscriber_count')->default(0); // Add this line to create the column
         });
     }
-
-    public function down()
-    {
-        Schema::table('channels', function (Blueprint $table) {
-            $table->dropColumn('subscriber_count'); // Drop the column if needed
-        });
-    }
 }

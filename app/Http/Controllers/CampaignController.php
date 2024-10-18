@@ -2,86 +2,77 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Campaign;
-use App\Models\EmailTemplate; // Import the EmailTemplate model
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Channel;
+use App\Models\Campaign;
+use App\Models\EmailTemplate;
+use App\Http\Requests\StoreCampaignRequest;
+use App\Http\Requests\UpdateCampaignRequest;
 
 class CampaignController extends Controller
 {
     public function index()
     {
-        $campaigns = Campaign::with('emailTemplate')->get(); // Eager load email templates
-        $emailTemplates = EmailTemplate::all(); // Fetch all available email templates for the dropdown
-
+        $campaigns = Campaign::with('emailTemplate')->get();
+        $emailTemplates = EmailTemplate::all();
+        $channels = Channel::all();
+    
         return Inertia::render('Campaigns/Index', [
             'campaigns' => $campaigns,
-            'emailTemplates' => $emailTemplates, // Pass email templates to the view
+            'emailTemplates' => $emailTemplates,
+            'channels' => $channels,
         ]);
     }
 
     public function create()
     {
-        // This method might be unnecessary if you're handling creation in the Index view.
-        $emailTemplates = EmailTemplate::all(); // Fetch all available email templates
+        $emailTemplates = EmailTemplate::all();
+        $channels = Channel::all();
 
         return Inertia::render('Campaigns/Create', [
             'emailTemplates' => $emailTemplates,
+            'channels' => $channels,
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreCampaignRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'type' => 'required|string',
-            'start_date' => 'required|date',
-            'end_date' => 'nullable|date',
-            'status' => 'required|in:active,paused,completed',
-            'email_template_id' => 'nullable|exists:email_templates,id', // Validate template ID
-            // Other fields...
-        ]);
-
-        Campaign::create($data); // Store campaign
-
+        $data = $request->validated();
+        $channels = $data['channels'] ?? [];
+        unset($data['channels']);
+    
+        $campaign = Campaign::create($data);
+        $campaign->channels()->sync($channels);
+    
         return redirect()->route('campaigns.index');
     }
 
-    public function edit($id)
+    public function edit(Campaign $campaign) // Model binding for Campaign
     {
-        // This method might also be unnecessary if you're handling editing in the Index view.
-        $campaign = Campaign::findOrFail($id);
-        $emailTemplates = EmailTemplate::all(); // Fetch all email templates for editing
-
+        $emailTemplates = EmailTemplate::all();
+        $channels = Channel::all();
+    
         return Inertia::render('Campaigns/Edit', [
             'campaign' => $campaign,
             'emailTemplates' => $emailTemplates,
+            'channels' => $channels,
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateCampaignRequest $request, Campaign $campaign)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'type' => 'required|string',
-            'start_date' => 'required|date',
-            'end_date' => 'nullable|date',
-            'status' => 'required|in:active,paused,completed',
-            'email_template_id' => 'nullable|exists:email_templates,id',
-            // Other fields...
-        ]);
-
-        $campaign = Campaign::findOrFail($id);
+        $data = $request->validated();
+        $channels = $data['channels'] ?? [];
+        unset($data['channels']);
+    
         $campaign->update($data);
-
+        $campaign->channels()->sync($channels);
+    
         return redirect()->route('campaigns.index');
     }
 
-    public function destroy($id)
+    public function destroy(Campaign $campaign) // Model binding for Campaign
     {
-        $campaign = Campaign::findOrFail($id);
         $campaign->delete();
 
         return redirect()->route('campaigns.index');

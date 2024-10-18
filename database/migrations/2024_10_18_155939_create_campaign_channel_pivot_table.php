@@ -9,15 +9,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('channels', function (Blueprint $table) {
+        Schema::create('campaign_channel_pivot', function (Blueprint $table) {
             $table->id();
-            $table->boolean('email')->default(false);
-            $table->boolean('sms')->default(false);
-            $table->boolean('social_media')->default(false);
-            $table->string('source');
+            $table->foreignId('campaign_id')->constrained()->onDelete('cascade');
+            $table->foreignId('channel_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
+
 };

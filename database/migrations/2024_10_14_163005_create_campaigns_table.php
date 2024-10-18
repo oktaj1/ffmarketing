@@ -24,14 +24,7 @@ return new class extends Migration
             $table->string('lead_source')->nullable(); // Lead Source
             $table->json('channels')->nullable(); // Channels (e.g., email, SMS, etc.)
             $table->timestamps(); // Created_at and updated_at
+            $table->foreignId('channel_id')->nullable()->constrained();
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('campaigns');
     }
 };
