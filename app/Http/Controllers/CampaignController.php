@@ -13,16 +13,17 @@ class CampaignController extends Controller
 {
     public function index()
     {
-        $campaigns = Campaign::with('emailTemplate')->get();
-        $emailTemplates = EmailTemplate::all();
-        $channels = Channel::all();
+        $campaigns = Campaign::all(); // Fetch your campaigns
+        $emailTemplates = EmailTemplate::all(); // Fetch your email templates
+        $channels = Channel::all(); // Fetch your channels
     
-        return Inertia::render('Campaigns/Index', [
+        return Inertia::render('Campaigns/Index', [ // Make sure 'Index' is capitalized
             'campaigns' => $campaigns,
             'emailTemplates' => $emailTemplates,
             'channels' => $channels,
         ]);
     }
+    
 
     public function create()
     {

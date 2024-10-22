@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('channels', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary(); // Use ulid as primary key
             $table->boolean('email')->default(false);
             $table->boolean('sms')->default(false);
             $table->boolean('social_media')->default(false);

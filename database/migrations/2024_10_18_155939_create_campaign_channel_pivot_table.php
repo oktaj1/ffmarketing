@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('campaign_channel_pivot', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('campaign_id')->constrained()->onDelete('cascade');
-            $table->foreignId('channel_id')->constrained()->onDelete('cascade');
+        Schema::create('campaign_channel', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            $table->ulid('campaign_id')->constrained()->onDelete('cascade');
+            $table->ulid('channel_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

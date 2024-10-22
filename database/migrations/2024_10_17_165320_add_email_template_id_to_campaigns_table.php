@@ -9,7 +9,7 @@ class AddEmailTemplateIdToCampaignsTable extends Migration
     public function up()
     {
         Schema::table('campaigns', function (Blueprint $table) {
-            $table->foreignId('email_template_id')->nullable()->constrained();
+            $table->ulid('email_template_id')->nullable()->constrained();
         });
     }
 }

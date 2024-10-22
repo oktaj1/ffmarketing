@@ -8,7 +8,7 @@ createInertiaApp({
             return import(`./Pages/Subscribers/${name.replace('Subscribers/', '')}.vue`);
         } else if (name.startsWith('Channels/')) {
             return import(`./Pages/Channels/${name.replace('Channels/', '')}.vue`);
-        } else if (name.startsWith('Campaigns/')) {
+        } else if (name.startsWith('Campaigns/')) {  // Ensure "Campaigns" matches the folder name
             return import(`./Pages/Campaigns/${name.replace('Campaigns/', '')}.vue`);
         } else {
             return import(`./Pages/${name}.vue`);
@@ -19,4 +19,6 @@ createInertiaApp({
             .use(plugin)
             .mount(el);
     },
+
 });
+

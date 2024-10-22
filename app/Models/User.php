@@ -6,25 +6,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Traits\HasUlid;
 
-class User extends Authenticatable
+
+class User extends Authenticatable 
+
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasUlid;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'email',
-        'first_name',
-        'last_name',
-        'channel',
-        'prompt',
-        'phone_number',
-        'password',
+    protected $guarded = [
+
     ];
 
     /**

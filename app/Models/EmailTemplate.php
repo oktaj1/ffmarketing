@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class EmailTemplate extends Model
 {
-    protected $fillable = ['name', 'subject', 'body'];
+    protected $guarded = [];
 
-    // You can add any relationships or custom logic here
+    // Define the relationship with Campaign
+    public function campaign()
+    {
+        return $this->belongsTo(Campaign::class);
+    }
 }

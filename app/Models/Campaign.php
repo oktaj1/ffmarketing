@@ -2,31 +2,32 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
+use App\Models\EmailTemplate;
 use Illuminate\Database\Eloquent\Model;
 
 class Campaign extends Model
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'type',
-        'start_date',
-        'end_date',
-        'status',
-        'email_template_id',
-        'target_audience',
-        'audience_size',
-        'lead_source'
-    ];
+    protected $guarded = [];
 
-    public function channels()
+    // Define the relationship with EmailTemplate
+    public function emailTemplates()
+    
     {
-        return $this->belongsToMany(Channel::class)
-            ->withTimestamps();
+        return $this->hasMany(EmailTemplate::class);
     }
 
-    public function emailTemplate()
+    protected static function boot()
     {
-        return $this->belongsTo(EmailTemplate::class);
+        parent::boot();
+
+        static::creating(function ($subscriber) {
+            $subscriber->id = (string) Str::ulid(); // Generate ULID
+        });
+    }
+    // Define any other relationships as needed
+    public function channels()
+    {
+        return $this->belongsToMany(Channel::class)->withTimestamps();
     }
 }

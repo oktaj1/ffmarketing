@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('campaigns', function (Blueprint $table) {
-            $table->id(); // Campaign ID
+            $table->ulid('id')->primary();
             $table->string('name'); // Campaign Name
             $table->text('description')->nullable(); // Campaign Description
             $table->string('type'); // Campaign Type (e.g., email, social media)
@@ -24,7 +24,8 @@ return new class extends Migration
             $table->string('lead_source')->nullable(); // Lead Source
             $table->json('channels')->nullable(); // Channels (e.g., email, SMS, etc.)
             $table->timestamps(); // Created_at and updated_at
-            $table->foreignId('channel_id')->nullable()->constrained();
+            $table->ulid('channel_id')->nullable()->constrained('channels', 'id');
+
         });
     }
 };

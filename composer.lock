@@ -1171,7 +1171,7 @@
                 "psr/container": "^1.1.1|^2.0.1",
                 "psr/log": "^1.0|^2.0|^3.0",
                 "psr/simple-cache": "^1.0|^2.0|^3.0",
-                "ramsey/uuid": "^4.7",
+                "ramsey/ulid": "^4.7",
                 "symfony/console": "^7.0",
                 "symfony/error-handler": "^7.0",
                 "symfony/finder": "^7.0",
@@ -3102,16 +3102,16 @@
             "time": "2022-12-31T21:50:55+00:00"
         },
         {
-            "name": "ramsey/uuid",
+            "name": "ramsey/ulid",
             "version": "4.7.6",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ramsey/uuid.git",
+                "url": "https://github.com/ramsey/ulid.git",
                 "reference": "91039bc1faa45ba123c4328958e620d382ec7088"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/91039bc1faa45ba123c4328958e620d382ec7088",
+                "url": "https://api.github.com/repos/ramsey/ulid/zipball/91039bc1faa45ba123c4328958e620d382ec7088",
                 "reference": "91039bc1faa45ba123c4328958e620d382ec7088",
                 "shasum": ""
             },
@@ -3122,7 +3122,7 @@
                 "ramsey/collection": "^1.2 || ^2.0"
             },
             "replace": {
-                "rhumsaa/uuid": "self.version"
+                "rhumsaa/ulid": "self.version"
             },
             "require-dev": {
                 "captainhook/captainhook": "^5.10",
@@ -3149,9 +3149,9 @@
             "suggest": {
                 "ext-bcmath": "Enables faster math with arbitrary-precision integers using BCMath.",
                 "ext-gmp": "Enables faster math with arbitrary-precision integers using GMP.",
-                "ext-uuid": "Enables the use of PeclUuidTimeGenerator and PeclUuidRandomGenerator.",
+                "ext-ulid": "Enables the use of PeclulidTimeGenerator and PeclulidRandomGenerator.",
                 "paragonie/random-lib": "Provides RandomLib for use with the RandomLibAdapter",
-                "ramsey/uuid-doctrine": "Allows the use of Ramsey\\Uuid\\Uuid as Doctrine field type."
+                "ramsey/ulid-doctrine": "Allows the use of Ramsey\\ulid\\ulid as Doctrine field type."
             },
             "type": "library",
             "extra": {
@@ -3164,22 +3164,22 @@
                     "src/functions.php"
                 ],
                 "psr-4": {
-                    "Ramsey\\Uuid\\": "src/"
+                    "Ramsey\\ulid\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
-            "description": "A PHP library for generating and working with universally unique identifiers (UUIDs).",
+            "description": "A PHP library for generating and working with universally unique identifiers (ulids).",
             "keywords": [
                 "guid",
                 "identifier",
-                "uuid"
+                "ulid"
             ],
             "support": {
-                "issues": "https://github.com/ramsey/uuid/issues",
-                "source": "https://github.com/ramsey/uuid/tree/4.7.6"
+                "issues": "https://github.com/ramsey/ulid/issues",
+                "source": "https://github.com/ramsey/ulid/tree/4.7.6"
             },
             "funding": [
                 {
@@ -3187,7 +3187,7 @@
                     "type": "github"
                 },
                 {
-                    "url": "https://tidelift.com/funding/github/packagist/ramsey/uuid",
+                    "url": "https://tidelift.com/funding/github/packagist/ramsey/ulid",
                     "type": "tidelift"
                 }
             ],
@@ -4700,16 +4700,16 @@
             "time": "2024-09-09T11:45:10+00:00"
         },
         {
-            "name": "symfony/polyfill-uuid",
+            "name": "symfony/polyfill-ulid",
             "version": "v1.31.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/polyfill-uuid.git",
+                "url": "https://github.com/symfony/polyfill-ulid.git",
                 "reference": "21533be36c24be3f4b1669c4725c7d1d2bab4ae2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-uuid/zipball/21533be36c24be3f4b1669c4725c7d1d2bab4ae2",
+                "url": "https://api.github.com/repos/symfony/polyfill-ulid/zipball/21533be36c24be3f4b1669c4725c7d1d2bab4ae2",
                 "reference": "21533be36c24be3f4b1669c4725c7d1d2bab4ae2",
                 "shasum": ""
             },
@@ -4717,10 +4717,10 @@
                 "php": ">=7.2"
             },
             "provide": {
-                "ext-uuid": "*"
+                "ext-ulid": "*"
             },
             "suggest": {
-                "ext-uuid": "For best performance"
+                "ext-ulid": "For best performance"
             },
             "type": "library",
             "extra": {
@@ -4734,7 +4734,7 @@
                     "bootstrap.php"
                 ],
                 "psr-4": {
-                    "Symfony\\Polyfill\\Uuid\\": ""
+                    "Symfony\\Polyfill\\ulid\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -4751,16 +4751,16 @@
                     "homepage": "https://symfony.com/contributors"
                 }
             ],
-            "description": "Symfony polyfill for uuid functions",
+            "description": "Symfony polyfill for ulid functions",
             "homepage": "https://symfony.com",
             "keywords": [
                 "compatibility",
                 "polyfill",
                 "portable",
-                "uuid"
+                "ulid"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-uuid/tree/v1.31.0"
+                "source": "https://github.com/symfony/polyfill-ulid/tree/v1.31.0"
             },
             "funding": [
                 {
@@ -5278,7 +5278,7 @@
             },
             "require": {
                 "php": ">=8.2",
-                "symfony/polyfill-uuid": "^1.15"
+                "symfony/polyfill-ulid": "^1.15"
             },
             "require-dev": {
                 "symfony/console": "^6.4|^7.0"
@@ -5315,7 +5315,7 @@
             "keywords": [
                 "UID",
                 "ulid",
-                "uuid"
+                "ulid"
             ],
             "support": {
                 "source": "https://github.com/symfony/uid/tree/v7.1.5"
