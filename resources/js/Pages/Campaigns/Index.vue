@@ -35,9 +35,9 @@
           <td>{{ campaign.end_date }}</td>
           <td>{{ campaign.status }}</td>
           <td>
-            <button class="edit-button" @click="editCampaign(campaign.id)">Edit</button>
-            <button class="delete-button" @click="deleteCampaign(campaign.id)">Delete</button>
-          </td>
+          <button class="edit-button" @click="editCampaign(campaign.ulid)">Edit</button>
+          <button class="delete-button" @click="deleteCampaign(campaign.ulid)">Delete</button>
+         </td>
         </tr>
       </tbody>
     </table>
@@ -141,12 +141,24 @@ export default {
       this.showModal = true;
       this.resetForm();
     },
-    editCampaign(id) {
-      this.editMode = true;
-      const campaign = this.campaigns.find(c => c.id === id);
-      this.campaignData = { ...campaign };
-      this.showModal = true;
-    },
+editCampaign(ulid) {
+  this.editMode = true;
+
+  // Find the campaign by its ULID
+  const campaign = this.campaigns.find(c => c.ulid === ulid);
+
+  // If the campaign is found, set the campaignData with necessary adjustments
+  if (campaign) {
+    this.campaignData = {
+      ...campaign,
+      email_template_id: campaign.email_template_id || null, // Default email template to null if not present
+      channels: campaign.channels.map(channel => channel.id) // Convert channels to an array of IDs
+    };
+    this.showModal = true; // Open the modal for editing
+  }
+},
+
+
     closeModal() {
       this.showModal = false;
       this.resetForm();
@@ -165,7 +177,7 @@ export default {
     },
     async handleSubmit() {
       if (this.editMode) {
-        await this.$inertia.put(`/campaigns/${this.campaignData.id}`, this.campaignData);
+        await this.$inertia.put(`/campaigns/${this.campaignData.ulidid}`, this.campaignData);
       } else {
         await this.$inertia.post('/campaigns', this.campaignData);
       }

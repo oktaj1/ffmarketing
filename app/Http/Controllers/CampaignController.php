@@ -61,8 +61,9 @@ class CampaignController extends Controller
     }
     
 
-    public function edit(Campaign $campaign)
+    public function edit($ulid)
     {
+        $campaign = Campaign::where('ulid', $ulid)->firstOrFail();
         $emailTemplates = EmailTemplate::all();
         $channels = Channel::all();
     
@@ -72,9 +73,10 @@ class CampaignController extends Controller
             'channels' => $channels,
         ]);
     }
-
-    public function update(UpdateCampaignRequest $request, Campaign $campaign)
+    
+    public function update(UpdateCampaignRequest $request, $ulid)
     {
+        $campaign = Campaign::where('ulid', $ulid)->firstOrFail();
         $data = $request->validated();
         $channels = $data['channels'] ?? []; // Make sure this is an array
         unset($data['channels']);
@@ -84,11 +86,15 @@ class CampaignController extends Controller
     
         return redirect()->route('campaigns.index');
     }
-
-    public function destroy(Campaign $campaign)
+    
+    public function destroy($ulid)
     {
-        $campaign->delete();
-
-        return redirect()->route('campaigns.index');
+        $campaign = Campaign::where('ulid', $ulid)->firstOrFail();
+        
+        $campaign->channels()->detach(); // Detach the related channels
+        $campaign->delete(); // Delete the campaign
+        
+        return redirect()->route('campaigns.index')->with('success', 'Campaign deleted successfully.');
     }
+    
 }
