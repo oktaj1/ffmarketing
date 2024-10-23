@@ -4,23 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
+use App\Traits\HasUlid;
 
 class Subscriber extends Model
 {
-    // Allow mass assignment on all fields
+    use HasFactory, SoftDeletes , HasUlid;
+
     protected $guarded = [];
 
-    protected static function boot()
-    {
-        parent::boot();
 
-        static::creating(function ($subscriber) {
-            $subscriber->id = (string) Str::ulid(); // Generate ULID
-        });
-    }
-
-    // Define the relationship to the Channel model
     public function channel(): BelongsTo
     {
         return $this->belongsTo(Channel::class);

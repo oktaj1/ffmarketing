@@ -12,11 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('email_templates', function (Blueprint $table) {
-                $table->ulid('id')->primary();
+                $table->id('id');
+                $table->ulid('ulid');
                 $table->string('name'); 
                 $table->text('content'); 
                 $table->ulid('campaign_id')->constrained()->onDelete('cascade');
                 $table->timestamps(); 
+                $table->softDeletes();
         });
     }
 };

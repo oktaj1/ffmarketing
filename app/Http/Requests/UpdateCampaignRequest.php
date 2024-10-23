@@ -21,7 +21,6 @@ class UpdateCampaignRequest extends FormRequest
             'end_date' => 'nullable|date',
             'status' => 'required|in:active,paused,completed',
             'email_template_id' => 'nullable|exists:email_templates,id',
-            // Add other fields as needed
         ];
     }
 }

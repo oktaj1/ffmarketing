@@ -2,23 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Cache;
+use App\Traits\HasUlid;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Channel extends Model
+class Channel extends Model 
 {
+    use HasUlid;
+    use SoftDeletes;
+    use HasFactory;
     protected $guarded = [];
 
-    protected static function boot()
-    {
-        parent::boot();
 
-        static::creating(function ($channel) {
-            $channel->id = (string) Str::ulid(); // Generate ulid
-        });
-    }
 
     protected $appends = ['subscriber_count'];
 

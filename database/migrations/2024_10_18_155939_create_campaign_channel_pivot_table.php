@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('campaign_channel', function (Blueprint $table) {
-            $table->ulid('id')->primary();
+            $table->id('id');
+            $table->ulid('ulid');
             $table->ulid('campaign_id')->constrained()->onDelete('cascade');
             $table->ulid('channel_id')->constrained()->onDelete('cascade');
             $table->timestamps();
+            
         });
     }
 

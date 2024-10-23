@@ -22,7 +22,6 @@ Route::get('/', function () {
     Route::post('/subscribers', [SubscriberController::class, 'store'])->name('subscribers.store');
     Route::delete('/subscribers/{subscriber}', [SubscriberController::class, 'destroy'])->name('subscribers.destroy');
     // Route::get('/channels', [ChannelController::class, 'index'])->name('channels.index');
-    Route::resource('campaigns', CampaignController::class);
     Route::resource('channels', ChannelController::class);
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');

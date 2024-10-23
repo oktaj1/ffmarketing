@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Support\Str;
 use App\Models\EmailTemplate;
+use App\Traits\HasUlid;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Campaign extends Model
 {
+    use HasUlid;
+    use HasFactory;
     protected $guarded = [];
 
     // Define the relationship with EmailTemplate
@@ -17,14 +21,6 @@ class Campaign extends Model
         return $this->hasMany(EmailTemplate::class);
     }
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($subscriber) {
-            $subscriber->id = (string) Str::ulid(); // Generate ULID
-        });
-    }
     // Define any other relationships as needed
     public function channels()
     {
