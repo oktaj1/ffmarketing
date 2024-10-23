@@ -75,15 +75,17 @@
               </option>
             </select>
           </div>
-                    <div class="form-group">
-            <label for="channel">Select Channel</label>
-            <select v-model="campaignData.channel_id" id="channel" class="input-field">
-              <option value="">Select a Channel</option>
-              <option v-for="channel in channels" :key="channel.id" :value="channel.id">
-                {{ channel.id }}
-              </option>
-            </select>
+
+          <div class="form-group">
+            <label for="channels">Select Channels</label>
+                <select v-model="campaignData.channels" id="channels" class="input-field" multiple>
+                  <option value="" disabled>Select Channels</option>
+                  <option v-for="channel in channels" :key="channel.id" :value="channel.id">
+                    {{ channel.source }}
+                  </option>
+                </select>
           </div>
+
           <div class="form-group">
             <label for="start-date">Start Date</label>
             <input v-model="campaignData.start_date" type="date" id="start-date" class="input-field" required />
@@ -112,11 +114,11 @@
 
 <script>
 export default {
-props: {
+  props: {
     campaigns: Array,
     emailTemplates: Array,
     channels: Array // Make sure this is included
-},
+  },
   data() {
     return {
       showModal: false,
@@ -128,7 +130,8 @@ props: {
         start_date: '',
         end_date: '',
         status: 'active',
-        email_template_id: null // Holds selected email template ID
+        email_template_id: null, // Holds selected email template ID
+        channels: [] // Initialize channels as an array
       }
     };
   },
@@ -156,7 +159,8 @@ props: {
         start_date: '',
         end_date: '',
         status: 'active',
-        email_template_id: null
+        email_template_id: null,
+        channels: [] // Reset channels when the form is closed
       };
     },
     async handleSubmit() {
@@ -179,7 +183,6 @@ props: {
       // Your logout logic
     },
     updateTemplateOptions() {
-      // This can be used to update or reset template-related data if necessary
       if (this.campaignData.type !== 'email') {
         this.campaignData.email_template_id = null; // Reset email template ID if not email type
       }
@@ -294,33 +297,23 @@ button:hover {
   justify-content: center;
   align-items: center;
   position: fixed;
-  z-index: 1000;
-  left: 0;
   top: 0;
-  width: 100%;
-  height: 100%;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-content {
   background-color: white;
   padding: 20px;
-  border-radius: 5px;
-  width: 500px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  width: 400px;
 }
 
 .close {
-  color: #aaa;
   float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
+  font-size: 1.5rem;
   cursor: pointer;
 }
 
@@ -330,8 +323,11 @@ button:hover {
 
 .input-field {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 8px;
+  margin-top: 5px;
+}
+
+input[type="date"] {
+  cursor: pointer;
 }
 </style>

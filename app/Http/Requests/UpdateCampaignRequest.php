@@ -18,9 +18,11 @@ class UpdateCampaignRequest extends FormRequest
             'description' => 'nullable|string',
             'type' => 'required|string',
             'start_date' => 'required|date',
-            'end_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after:start_date',
             'status' => 'required|in:active,paused,completed',
             'email_template_id' => 'nullable|exists:email_templates,id',
+            'channels' => 'array', // Add validation for channels
+            'channels.*' => 'exists:channels,id' // Ensure channel IDs are valid
         ];
     }
 }

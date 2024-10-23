@@ -14,19 +14,21 @@ return new class extends Migration
         Schema::create('campaigns', function (Blueprint $table) {
             $table->id('id');
             $table->ulid('ulid');
-            $table->string('name'); // Campaign Name
-            $table->text('description')->nullable(); // Campaign Description
-            $table->string('type'); // Campaign Type (e.g., email, social media)
-            $table->date('start_date'); // Start Date
-            $table->date('end_date')->nullable(); // End Date
-            $table->enum('status', ['active', 'paused', 'completed'])->default('active'); // Status
-            $table->text('target_audience')->nullable(); // Target Audience
-            $table->integer('audience_size')->nullable(); // Audience Size
-            $table->string('lead_source')->nullable(); // Lead Source
-            $table->json('channels')->nullable(); // Channels (e.g., email, SMS, etc.)
-            $table->timestamps(); // Created_at and updated_at
-            $table->ulid('channel_id')->nullable()->constrained('channels', 'id');
-            $table->softDeletes();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->string('type');
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
+            $table->enum('status', ['active', 'paused', 'completed']);
+            $table->string('target_audience')->nullable();
+            $table->integer('audience_size')->nullable();
+            $table->string('lead_source')->nullable();
+            $table->timestamps();
         });
     }
 };
+
+
+?>
+
+

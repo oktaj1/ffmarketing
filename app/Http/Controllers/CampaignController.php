@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log; // Import Log facade
 use App\Models\Channel;
 use App\Models\Campaign;
 use App\Models\EmailTemplate;
@@ -13,18 +14,17 @@ class CampaignController extends Controller
 {
     public function index()
     {
-        $campaigns = Campaign::all(); // Fetch your campaigns
-        $emailTemplates = EmailTemplate::all(); // Fetch your email templates
-        $channels = Channel::all(); // Fetch your channels
+        $campaigns = Campaign::with('channels')->get();
+        $emailTemplates = EmailTemplate::all();
+        $channels = Channel::all();
     
-        return Inertia::render('Campaigns/Index', [ // Make sure 'Index' is capitalized
+        return Inertia::render('Campaigns/Index', [
             'campaigns' => $campaigns,
             'emailTemplates' => $emailTemplates,
             'channels' => $channels,
         ]);
     }
     
-
     public function create()
     {
         $emailTemplates = EmailTemplate::all();
@@ -38,17 +38,30 @@ class CampaignController extends Controller
 
     public function store(StoreCampaignRequest $request)
     {
-        $data = $request->validated();
-        $channels = $data['channels'] ?? [];
-        unset($data['channels']);
+        // Get the validated data
+        $validated = $request->validated(); 
     
-        $campaign = Campaign::create($data);
-        $campaign->channels()->sync($channels);
+        // Remove the 'channels' key from the validated data because we don't store it in the campaigns table
+        $channels = $validated['channels'] ?? []; // Store channels separately
+        unset($validated['channels']); // Remove channels from the main data array
     
-        return redirect()->route('campaigns.index');
+        // Log the validated data for debugging
+        Log::info('Validated data:', $validated);
+    
+        // Create the campaign with the remaining validated data
+        $campaign = Campaign::create($validated);
+    
+        // Attach the selected channels to the campaign (using the pivot table)
+        if (!empty($channels)) {
+            $campaign->channels()->attach($channels);
+        }
+    
+        // Redirect with success message
+        return redirect()->route('campaigns.index')->with('success', 'Campaign created successfully.');
     }
+    
 
-    public function edit(Campaign $campaign) // Model binding for Campaign
+    public function edit(Campaign $campaign)
     {
         $emailTemplates = EmailTemplate::all();
         $channels = Channel::all();
@@ -63,7 +76,7 @@ class CampaignController extends Controller
     public function update(UpdateCampaignRequest $request, Campaign $campaign)
     {
         $data = $request->validated();
-        $channels = $data['channels'] ?? [];
+        $channels = $data['channels'] ?? []; // Make sure this is an array
         unset($data['channels']);
     
         $campaign->update($data);
@@ -72,7 +85,7 @@ class CampaignController extends Controller
         return redirect()->route('campaigns.index');
     }
 
-    public function destroy(Campaign $campaign) // Model binding for Campaign
+    public function destroy(Campaign $campaign)
     {
         $campaign->delete();
 

@@ -18,10 +18,13 @@ class StoreCampaignRequest extends FormRequest
             'description' => 'nullable|string',
             'type' => 'required|string',
             'start_date' => 'required|date',
-            'end_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after:start_date',
             'status' => 'required|in:active,paused,completed',
-            'email_template_id' => 'nullable|exists:email_templates,id',
-
+            'target_audience' => 'nullable|string',
+            'audience_size' => 'nullable|integer',
+            'lead_source' => 'nullable|string',
+            'channels' => 'array', // Add this line to validate channels array
+            'channels.*' => 'exists:channels,id' // Validate each channel ID
         ];
     }
 }

@@ -12,18 +12,18 @@ class Campaign extends Model
 {
     use HasUlid;
     use HasFactory;
-    protected $guarded = [];
 
-    // Define the relationship with EmailTemplate
-    public function emailTemplates()
-    
+    protected $guarded = []; // Allow mass assignment for all fields
+
+    // One campaign is associated with one email template
+    public function emailTemplate()
     {
-        return $this->hasMany(EmailTemplate::class);
+        return $this->belongsTo(EmailTemplate::class);
     }
 
-    // Define any other relationships as needed
+    // Many-to-many relationship with channels
     public function channels()
     {
-        return $this->belongsToMany(Channel::class)->withTimestamps();
+        return $this->belongsToMany(Channel::class, 'campaign_channel');
     }
 }

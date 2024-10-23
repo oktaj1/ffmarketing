@@ -33,4 +33,9 @@ class Channel extends Model
             return $this->subscribers()->count();
         });
     }
+
+    public function campaigns()
+    {
+        return $this->belongsToMany(Campaign::class, 'campaign_channel');
+    }
 }

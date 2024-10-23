@@ -17,19 +17,17 @@ class CampaignFactory extends Factory
      */
     public function definition(): array
     {
-        return [
-            'ulid' => (string) Str::ulid(),
-            'name' => $this->faker->sentence(3),
-            'description' => $this->faker->paragraph,
-            'type' => $this->faker->randomElement(['email', 'sms']),
-            'start_date' => $this->faker->date(),
-            'end_date' => $this->faker->date(),
-            'status' => $this->faker->randomElement(['active', 'paused', 'completed']),
-            'target_audience' => $this->faker->text(),
-            'audience_size' => $this->faker->numberBetween(1, 10000),
-            'lead_source' => $this->faker->word(),
-            'channels' => json_encode([$this->faker->word(), $this->faker->word()]), // Fix: remove backticks
-        ];
-            
-    }
+    return [
+    'ulid' => (string) Str::ulid(),
+    'name' => $this->faker->name,
+    'description' => $this->faker->paragraph,
+    'type' => $this->faker->randomElement(['email', 'sms']),
+    'start_date' => $this->faker->date(),
+    'end_date' => $this->faker->date(),
+    'status' => $this->faker->randomElement(['active', 'paused', 'completed']),
+    'target_audience' => $this->faker->sentence,
+    'audience_size' => $this->faker->numberBetween(1000, 5000),
+    'lead_source' => $this->faker->word,
+   ];         
+}
 }
