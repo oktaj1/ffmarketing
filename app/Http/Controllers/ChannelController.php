@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Inertia\Inertia;
 use App\Models\Channel;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\ChannelResource;
 use App\Http\Requests\StoreChannelRequest;
 use App\Http\Requests\UpdateChannelRequest;
+use Illuminate\Http\JsonResponse;
 
 class ChannelController extends Controller
 {
@@ -51,12 +54,18 @@ public function index()
         return redirect()->route('channels.index')->with('success', 'Channel updated successfully.');
     }
 
-    public function destroy($ulid)
+    public function destroy(Channel $channel)
     {
-        $channel = Channel::where('ulid', $ulid)->firstOrFail();
-        $channel->campaign()->detach();
-        $channel->delete();
-    
+        DB::beginTransaction();
+        try{
+            $channel->campaigns()->detach();
+            $channel->delete();
+            DB::commit();
+        }catch(Exception $e){
+            DB::rollBack();
+            return JsonResponse::error($e->getMessage());
+        }
+
         return redirect()->route('channels.index')->with('success', 'Channel deleted successfully.');
     }
 }

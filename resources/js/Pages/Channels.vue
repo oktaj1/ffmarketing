@@ -22,15 +22,15 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="channel in channels" :key="channel.ulid">
+        <tr v-for="channel in channels" :key="channel.id">
           <td>{{ channel.email ? 'Yes' : 'No' }}</td>
           <td>{{ channel.sms ? 'Yes' : 'No' }}</td>
           <td>{{ channel.social_media ? 'Yes' : 'No' }}</td>
           <td>{{ channel.source }}</td>
           <td>{{ channel.subscribers_count }}</td>
           <td>
-            <button class="edit-button" @click="editChannel(channel.ulid)">Edit</button>
-            <button class="delete-button" @click="deleteChannel(channel.ulid)">Delete</button>
+            <button class="edit-button" @click="editChannel(channel.id)">Edit</button>
+            <button class="delete-button" @click="deleteChannel(channel.id)">Delete</button>
           </td>
         </tr>
       </tbody>
