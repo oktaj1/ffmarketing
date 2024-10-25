@@ -23,7 +23,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="channel in channels" :key="channel.id">
+        <tr v-for="channel in channels" :key="channel.ulid">
           <td>{{ channel.id }}</td>
           <td>{{ channel.email ? 'Yes' : 'No' }}</td>
           <td>{{ channel.sms ? 'Yes' : 'No' }}</td>
@@ -31,10 +31,8 @@
           <td>{{ channel.source }}</td>
           <td>{{ channel.subscribers_count }}</td>
           <td>
-          <td>
             <button class="edit-button" @click="editChannel(channel.ulid)">Edit</button>
             <button class="delete-button" @click="deleteChannel(channel.ulid)">Delete</button>
-          </td>
           </td>
         </tr>
       </tbody>
@@ -75,15 +73,16 @@ export default {
   props: {
     channels: {
       type: Array,
-      required: true
-
-    }, // Receive channels from props, including subscriber_count
+      required: true,
+      default: () => []
+    }
   },
   data() {
     return {
       showModal: false,
       editMode: false,
       channelData: {
+        ulid: null,
         email: false,
         sms: false,
         social_media: false,
@@ -95,23 +94,41 @@ export default {
     editChannel(ulid) {
       this.editMode = true;
       const channel = this.channels.find(c => c.ulid === ulid);
-      this.channelData = { ...channel };
-      this.showModal = true;
+
+      if (channel) {
+        this.channelData = {
+          ulid: channel.ulid,
+          email: channel.email,
+          sms: channel.sms,
+          social_media: channel.social_media,
+          source: channel.source
+        };
+        this.showModal = true;
+      }
     },
     async deleteChannel(ulid) {
       if (confirm('Are you sure you want to delete this channel?')) {
-        await this.$inertia.delete(`/channels/${ulid}`);
+        try {
+          await this.$inertia.delete(`/channels/${ulid}`);
+        } catch (error) {
+          console.error('Error deleting channel:', error);
+        }
       }
     },
     async handleSubmit() {
-      if (this.editMode) {
-        await this.$inertia.put(`/channels/${this.channelData.ulid}`, this.channelData);
-      } else {
-        await this.$inertia.post('/channels', this.channelData);
+      try {
+        if (this.editMode) {
+          await this.$inertia.put(`/channels/${this.channelData.ulid}`, this.channelData);
+        } else {
+          await this.$inertia.post('/channels', this.channelData);
+        }
+        this.closeModal();
+      } catch (error) {
+        console.error('Error submitting form:', error);
       }
-      this.closeModal();
     },
-  },
+    // ... rest of your methods ...
+  }
 };
 </script>
 

@@ -7,7 +7,7 @@ createInertiaApp({
         if (name.startsWith('Subscribers/')) {
             return import(`./Pages/Subscribers/${name.replace('Subscribers/', '')}.vue`);
         } else if (name.startsWith('Channels/')) {
-            return import(`./Pages/Channels/${name.replace('Channels/', '')}.vue`);
+            return import(`./Pages/${name.replace('Channels/', '')}.vue`);
         } else if (name.startsWith('Campaigns/')) {  // Ensure "Campaigns" matches the folder name
             return import(`./Pages/Campaigns/${name.replace('Campaigns/', '')}.vue`);
         } else {

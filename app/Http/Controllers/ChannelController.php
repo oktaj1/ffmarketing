@@ -10,14 +10,14 @@ use App\Http\Requests\UpdateChannelRequest;
 
 class ChannelController extends Controller
 {
-    public function index()
-    {
-        $channels = Channel::withCount('subscribers')->get();
-    
-        return Inertia::render('Channels', [
-            'channels' => ChannelResource::collection($channels),
-        ]);
-    }
+public function index()
+{
+    $channels = Channel::withCount('subscribers')->get();
+
+    return Inertia::render('Channels', [
+        'channels' => ChannelResource::collection($channels)->response()->getData(true)['data'],
+    ]);
+}
 
     public function create()
     {
