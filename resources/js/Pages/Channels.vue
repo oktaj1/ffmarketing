@@ -13,7 +13,6 @@
     <table class="styled-table">
       <thead>
         <tr>
-          <th>ID</th>
           <th>Email</th>
           <th>SMS</th>
           <th>Social Media</th>
@@ -24,7 +23,6 @@
       </thead>
       <tbody>
         <tr v-for="channel in channels" :key="channel.ulid">
-          <td>{{ channel.id }}</td>
           <td>{{ channel.email ? 'Yes' : 'No' }}</td>
           <td>{{ channel.sms ? 'Yes' : 'No' }}</td>
           <td>{{ channel.social_media ? 'Yes' : 'No' }}</td>
@@ -106,13 +104,9 @@ export default {
         this.showModal = true;
       }
     },
-    async deleteChannel(ulid) {
+    async deleteChannel(id) {  // use 'id' instead of 'ulid' here
       if (confirm('Are you sure you want to delete this channel?')) {
-        try {
-          await this.$inertia.delete(`/channels/${ulid}`);
-        } catch (error) {
-          console.error('Error deleting channel:', error);
-        }
+        await this.$inertia.delete(`/channels/${id}`);
       }
     },
     async handleSubmit() {
