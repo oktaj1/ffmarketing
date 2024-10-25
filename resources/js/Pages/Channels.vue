@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-            <div class="button-container">
-            <button @click="navigateTo('subscribers')">Subscribers</button>
-            <button @click="navigateTo('channels')">Channels</button>
-            <button @click="navigateTo('campaigns')">Campaigns</button>
-            <button @click="navigateTo('settings')">Settings</button>
-            <button @click="logout">Logout</button>
-        </div>
+    <div class="button-container">
+      <button @click="navigateTo('subscribers')">Subscribers</button>
+      <button @click="navigateTo('channels')">Channels</button>
+      <button @click="navigateTo('campaigns')">Campaigns</button>
+      <button @click="navigateTo('settings')">Settings</button>
+      <button @click="logout">Logout</button>
+    </div>
     <h1>Channels</h1>
     <button class="button" @click="openCreateModal">Create New Channel</button>
 
@@ -29,13 +29,16 @@
           <td>{{ channel.sms ? 'Yes' : 'No' }}</td>
           <td>{{ channel.social_media ? 'Yes' : 'No' }}</td>
           <td>{{ channel.source }}</td>
-          <td>{{ channel.subscriber_count }}</td>
+          <td>{{ channel.subscribers_count }}</td>
           <td>
-            <button class="edit-button" @click="editChannel(channel.id)">Edit</button>
-            <button class="delete-button" @click="deleteChannel(channel.id)">Delete</button>
+          <td>
+            <button class="edit-button" @click="editChannel(channel.ulid)">Edit</button>
+            <button class="delete-button" @click="deleteChannel(channel.ulid)">Delete</button>
+          </td>
           </td>
         </tr>
       </tbody>
+
     </table>
 
     <!-- Modal for creating or editing a channel -->
@@ -70,7 +73,11 @@
 <script>
 export default {
   props: {
-    channels: Array, // Receive channels from props, including subscriber_count
+    channels: {
+      type: Array,
+      required: true
+
+    }, // Receive channels from props, including subscriber_count
   },
   data() {
     return {
@@ -85,32 +92,20 @@ export default {
     };
   },
   methods: {
-    openCreateModal() {
-      this.editMode = false;
-      this.showModal = true;
-      this.resetForm();
-    },
-    closeModal() {
-      this.showModal = false;
-      this.resetForm();
-    },
-    resetForm() {
-      this.channelData = { email: false, sms: false, social_media: false, source: '' };
-    },
-    editChannel(id) {
+    editChannel(ulid) {
       this.editMode = true;
-      const channel = this.channels.find(c => c.id === id);
+      const channel = this.channels.find(c => c.ulid === ulid);
       this.channelData = { ...channel };
       this.showModal = true;
     },
-    async deleteChannel(id) {
+    async deleteChannel(ulid) {
       if (confirm('Are you sure you want to delete this channel?')) {
-        await this.$inertia.delete(`/channels/${id}`);
+        await this.$inertia.delete(`/channels/${ulid}`);
       }
     },
     async handleSubmit() {
       if (this.editMode) {
-        await this.$inertia.put(`/channels/${this.channelData.id}`, this.channelData);
+        await this.$inertia.put(`/channels/${this.channelData.ulid}`, this.channelData);
       } else {
         await this.$inertia.post('/channels', this.channelData);
       }
@@ -225,22 +220,23 @@ h1 {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
+
 .button-container {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 button {
-    margin: 10px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007BFF;
-    color: white;
-    cursor: pointer;
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
 }
 
 button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 .close {

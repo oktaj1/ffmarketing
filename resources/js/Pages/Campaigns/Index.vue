@@ -35,9 +35,9 @@
           <td>{{ campaign.end_date }}</td>
           <td>{{ campaign.status }}</td>
           <td>
-          <button class="edit-button" @click="editCampaign(campaign.ulid)">Edit</button>
-          <button class="delete-button" @click="deleteCampaign(campaign.ulid)">Delete</button>
-         </td>
+            <button class="edit-button" @click="editCampaign(campaign.ulid)">Edit</button>
+            <button class="delete-button" @click="deleteCampaign(campaign.ulid)">Delete</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -78,12 +78,10 @@
 
           <div class="form-group">
             <label for="channels">Select Channels</label>
-                <select v-model="campaignData.channels" id="channels" class="input-field" multiple>
-                  <option value="" disabled>Select Channels</option>
-                  <option v-for="channel in channels" :key="channel.id" :value="channel.id">
-                    {{ channel.source }}
-                  </option>
-                </select>
+            <div v-for="channel in channels" :key="channel.id" class="checkbox-group">
+              <input type="checkbox" :id="`channel-${channel.id}`" :value="channel.id" v-model="campaignData.channels" />
+              <label :for="`channel-${channel.id}`">{{ channel.source }}</label>
+            </div>
           </div>
 
           <div class="form-group">
@@ -117,7 +115,10 @@ export default {
   props: {
     campaigns: Array,
     emailTemplates: Array,
-    channels: Array // Make sure this is included
+    channels:{
+      type : Array,
+      required : true,
+    } 
   },
   data() {
     return {
@@ -130,8 +131,8 @@ export default {
         start_date: '',
         end_date: '',
         status: 'active',
-        email_template_id: null, // Holds selected email template ID
-        channels: [] // Initialize channels as an array
+        email_template_id: null,
+        channels: [] // Updated to use checkboxes
       }
     };
   },
@@ -141,24 +142,20 @@ export default {
       this.showModal = true;
       this.resetForm();
     },
-editCampaign(ulid) {
-  this.editMode = true;
+    editCampaign(ulid) {
+      this.editMode = true;
 
-  // Find the campaign by its ULID
-  const campaign = this.campaigns.find(c => c.ulid === ulid);
+      const campaign = this.campaigns.find(c => c.ulid === ulid);
 
-  // If the campaign is found, set the campaignData with necessary adjustments
-  if (campaign) {
-    this.campaignData = {
-      ...campaign,
-      email_template_id: campaign.email_template_id || null, // Default email template to null if not present
-      channels: campaign.channels.map(channel => channel.id) // Convert channels to an array of IDs
-    };
-    this.showModal = true; // Open the modal for editing
-  }
-},
-
-
+      if (campaign) {
+        this.campaignData = {
+          ...campaign,
+          email_template_id: campaign.email_template_id || null,
+          channels: campaign.channels.map(channel => channel.id)
+        };
+        this.showModal = true;
+      }
+    },
     closeModal() {
       this.showModal = false;
       this.resetForm();
@@ -172,12 +169,12 @@ editCampaign(ulid) {
         end_date: '',
         status: 'active',
         email_template_id: null,
-        channels: [] // Reset channels when the form is closed
+        channels: []
       };
     },
     async handleSubmit() {
       if (this.editMode) {
-        await this.$inertia.put(`/campaigns/${this.campaignData.ulidid}`, this.campaignData);
+        await this.$inertia.put(`/campaigns/${this.campaignData.ulid}`, this.campaignData);
       } else {
         await this.$inertia.post('/campaigns', this.campaignData);
       }
@@ -196,7 +193,7 @@ editCampaign(ulid) {
     },
     updateTemplateOptions() {
       if (this.campaignData.type !== 'email') {
-        this.campaignData.email_template_id = null; // Reset email template ID if not email type
+        this.campaignData.email_template_id = null;
       }
     }
   }
@@ -309,23 +306,34 @@ button:hover {
   justify-content: center;
   align-items: center;
   position: fixed;
-  top: 0;
+  z-index: 1;
   left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-content {
-  background-color: white;
+  background-color: #fefefe;
   padding: 20px;
-  border-radius: 8px;
-  width: 400px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 80%;
+  max-width: 500px;
 }
 
 .close {
+  color: #aaa;
   float: right;
-  font-size: 1.5rem;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -333,13 +341,39 @@ button:hover {
   margin-bottom: 15px;
 }
 
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
 .input-field {
   width: 100%;
   padding: 8px;
-  margin-top: 5px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
-input[type="date"] {
+.checkbox-group {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-group input {
+  margin-right: 10px;
+}
+
+.btn {
+  padding: 10px 15px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #218838;
 }
 </style>
