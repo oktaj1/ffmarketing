@@ -30,4 +30,5 @@ Route::get('/', function () {
     })->name('logout');
 
     Route::resource('campaigns', CampaignController::class);
+   
 // });

@@ -79,7 +79,8 @@
           <div class="form-group">
             <label for="channels">Select Channels</label>
             <div v-for="channel in channels" :key="channel.id" class="checkbox-group">
-              <input type="checkbox" :id="`channel-${channel.id}`" :value="channel.id" v-model="campaignData.channels" />
+              <input type="checkbox" :id="`channel-${channel.id}`" :value="channel.id"
+                v-model="campaignData.channels" />
               <label :for="`channel-${channel.id}`">{{ channel.source }}</label>
             </div>
           </div>
@@ -115,10 +116,10 @@ export default {
   props: {
     campaigns: Array,
     emailTemplates: Array,
-    channels:{
-      type : Array,
-      required : true,
-    } 
+    channels: {
+      type: Array,
+      required: true,
+    }
   },
   data() {
     return {
