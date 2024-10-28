@@ -11,6 +11,31 @@
 
     <button class="button" @click="openCreateModal">Create New Subscriber</button>
 
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <label>Filter by Channel:</label>
+      <select v-model="filters.channel_id">
+        <option value="">All Channels</option>
+        <option v-for="channel in channels" :key="channel.id" :value="channel.id">
+          {{ channel.source }}
+        </option>
+      </select>
+
+      <label>Filter by Email:</label>
+      <input type="text" v-model="filters.email" placeholder="Enter email" />
+
+      <!-- <label>Created At (From):</label>
+      <input type="date" v-model="filters.created_from" />
+
+      <label>Created At (To):</label>
+      <input type="date" v-model="filters.created_to" /> -->
+
+      <!-- Search Button to trigger filter -->
+      <button @click="applyFilters">Search</button>
+      <button @click="resetFilters">Reset Filters</button>
+    </div>
+
+    <!-- Subscribers Table -->
     <table class="styled-table">
       <thead>
         <tr>
@@ -18,7 +43,9 @@
           <th>First Name</th>
           <th>Last Name</th>
           <th>Channel</th>
-          <th>Actions</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th>Avatar</th>
         </tr>
       </thead>
       <tbody>
@@ -27,9 +54,9 @@
           <td>{{ subscriber.first_name }}</td>
           <td>{{ subscriber.last_name }}</td>
           <td>{{ subscriber.channel ? subscriber.channel.source : 'No Channel' }}</td>
-          <td>
-            <button class="delete-button" @click="deleteSubscriber(subscriber.id)">Delete</button>
-          </td>
+          <td>{{ subscriber.phone_number }}</td>
+          <td>{{ subscriber.address }}</td>
+          <td><img :src="subscriber.avatar_image" alt="Avatar" class="avatar-img" /></td>
         </tr>
       </tbody>
     </table>
@@ -60,7 +87,10 @@
               </option>
             </select>
           </div>
-          <button type="submit" class="submit-button">Create</button>
+          <button type="submit" class="submit-button" :disabled="isLoading">
+            <span v-if="isLoading">Loading...</span>
+            <span v-else>Create</span>
+          </button>
         </form>
       </div>
     </div>
@@ -68,19 +98,27 @@
 </template>
 
 <script>
+import { debounce } from "lodash";
 export default {
   props: {
     subscribers: Array,
-    channels: Array, // List of channels for subscriber form
+    channels: Array,
   },
   data() {
     return {
       showModal: false,
+      isLoading: false,
       formData: {
         email: '',
         first_name: '',
         last_name: '',
-        channel_id: null, // Selected channel
+        channel_id: null,
+      },
+      filters: {
+        channel_id: '',
+        email: '',
+        created_from: '',
+        created_to: '',
       },
     };
   },
@@ -100,18 +138,66 @@ export default {
         channel_id: null,
       };
     },
+    applyFilters() {
+      this.$inertia.get('/subscribers', { ...this.filters });
+    },
+    resetFilters() {
+      this.filters = { channel_id: "", email: "", created_from: "", created_to: "" };
+      this.applyFilters();
+    },
     async handleSubmit() {
+      this.isLoading = true;
       await this.$inertia.post('/subscribers', this.formData);
+      this.isLoading = false;
       this.closeModal();
     },
     async deleteSubscriber(id) {
       if (confirm('Are you sure you want to delete this subscriber?')) {
+        this.isLoading = true;
         await this.$inertia.delete(`/subscribers/${id}`);
+        this.isLoading = false;
       }
     },
   },
 };
 </script>
+
+<style scoped>
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+/* Additional styling omitted for brevity */
+</style>
+
 
 <style scoped>
 .container {
@@ -236,6 +322,12 @@ button {
   background-color: #007BFF;
   color: white;
   cursor: pointer;
+}
+
+.avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 button:hover {
