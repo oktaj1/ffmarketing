@@ -15,6 +15,7 @@ return new class extends Migration
             $table->ulid('campaign_id');
             $table->ulid('channel_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

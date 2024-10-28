@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('id');
             $table->ulid('ulid');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

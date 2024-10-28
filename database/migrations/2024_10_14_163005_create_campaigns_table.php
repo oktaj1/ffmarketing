@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('audience_size')->nullable();
             $table->string('lead_source')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 };
