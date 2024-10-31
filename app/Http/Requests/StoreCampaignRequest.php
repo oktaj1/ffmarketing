@@ -6,11 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCampaignRequest extends FormRequest
 {
-    public function authorize()
-    {
-        return true;
-    }
-
     public function rules()
     {
         return [
@@ -20,11 +15,8 @@ class StoreCampaignRequest extends FormRequest
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after:start_date',
             'status' => 'required|in:active,paused,completed',
-            'target_audience' => 'nullable|string',
-            'audience_size' => 'nullable|integer',
-            'lead_source' => 'nullable|string',
-            'channels' => 'array', // Add this line to validate channels array
-            'channels.*' => 'exists:channels,id' // Validate each channel ID
+            'channels' => 'array',
+            'channels.*' => 'exists:channels,ulid'  // Validate against ULIDs
         ];
     }
 }

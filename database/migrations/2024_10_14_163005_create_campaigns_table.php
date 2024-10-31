@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('campaigns', function (Blueprint $table) {
-            $table->id('id');
-            $table->ulid('ulid');
+            $table->id();
+            $table->ulid('ulid')->unique()->index(); // Add unique and index
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('type');

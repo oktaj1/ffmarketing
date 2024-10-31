@@ -15,7 +15,7 @@
     <table class="styled-table">
       <thead>
         <tr>
-          <th>ID</th>
+          <!-- <th>ID</th> -->
           <th>Name</th>
           <th>Description</th>
           <th>Type</th>
@@ -27,7 +27,7 @@
       </thead>
       <tbody>
         <tr v-for="campaign in campaigns" :key="campaign.id">
-          <td>{{ campaign.id }}</td>
+          <!-- <td>{{ campaign.id }}</td> -->
           <td>{{ campaign.name }}</td>
           <td>{{ campaign.description }}</td>
           <td>{{ campaign.type }}</td>

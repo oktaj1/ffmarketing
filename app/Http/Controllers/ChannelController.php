@@ -13,21 +13,20 @@ use Illuminate\Http\JsonResponse;
 
 class ChannelController extends Controller
 {
-public function index()
-{
-    $channels = Channel::withCount('subscribers')->get();
+    public function index(): \Inertia\Response
+    {
+        $channels = Channel::withCount('subscribers')->get();
+        return Inertia::render('Channels', [
+            'channels' => ChannelResource::collection($channels)->response()->getData(true)['data'],
+        ]);
+    }
 
-    return Inertia::render('Channels', [
-        'channels' => ChannelResource::collection($channels)->response()->getData(true)['data'],
-    ]);
-}
-
-    public function create()
+    public function create(): \Inertia\Response
     {
         return Inertia::render('Channels/Create');
     }
 
-    public function store(StoreChannelRequest $request)
+    public function store(StoreChannelRequest $request): \Illuminate\Http\RedirectResponse
     {
         $validated = $request->validated();
         Channel::create($validated);
@@ -35,35 +34,33 @@ public function index()
         return redirect()->route('channels.index')->with('success', 'Channel created successfully.');
     }
 
-    public function edit($ulid)
+    public function edit($ulid): \Inertia\Response
     {
         $channel = Channel::where('ulid', $ulid)->firstOrFail();
-
         return Inertia::render('Channels/Edit', [
             'channel' => $channel,
         ]);
     }
 
-    public function update(UpdateChannelRequest $request, $ulid)
+    public function update(UpdateChannelRequest $request, $ulid): \Illuminate\Http\RedirectResponse
     {
         $channel = Channel::where('ulid', $ulid)->firstOrFail();
         $data = $request->validated();
-
         $channel->update($data);
 
         return redirect()->route('channels.index')->with('success', 'Channel updated successfully.');
     }
 
-    public function destroy(Channel $channel)
+    public function destroy(Channel $channel): \Illuminate\Http\RedirectResponse
     {
         DB::beginTransaction();
-        try{
+        try {
             $channel->campaigns()->detach();
             $channel->delete();
             DB::commit();
-        }catch(Exception $e){
+        } catch (Exception $e) {
             DB::rollBack();
-            return JsonResponse::error($e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
 
         return redirect()->route('channels.index')->with('success', 'Channel deleted successfully.');

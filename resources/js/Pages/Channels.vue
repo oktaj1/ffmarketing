@@ -13,6 +13,7 @@
     <table class="styled-table">
       <thead>
         <tr>
+          <!-- <th>ID</th> -->
           <th>Email</th>
           <th>SMS</th>
           <th>Social Media</th>
@@ -22,19 +23,19 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="channel in channels" :key="channel.id">
+        <tr v-for="channel in channels" :key="channel.ulid">
+          <!-- <td>{{ channel.id }}</td> -->
           <td>{{ channel.email ? 'Yes' : 'No' }}</td>
           <td>{{ channel.sms ? 'Yes' : 'No' }}</td>
           <td>{{ channel.social_media ? 'Yes' : 'No' }}</td>
           <td>{{ channel.source }}</td>
           <td>{{ channel.subscribers_count }}</td>
           <td>
-            <button class="edit-button" @click="editChannel(channel.id)">Edit</button>
-            <button class="delete-button" @click="deleteChannel(channel.id)">Delete</button>
+            <button class="edit-button" @click="editChannel(channel.ulid)">Edit</button>
+            <button @click="deleteChannel(channel.id)">Delete</button>
           </td>
         </tr>
       </tbody>
-
     </table>
 
     <!-- Modal for creating or editing a channel -->
@@ -67,64 +68,95 @@
 </template>
 
 <script>
-export default {
+import { ref, defineComponent } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
+
+export default defineComponent({
   props: {
     channels: {
       type: Array,
       required: true,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
-  data() {
-    return {
-      showModal: false,
-      editMode: false,
-      channelData: {
-        ulid: null,
-        email: false,
-        sms: false,
-        social_media: false,
-        source: '',
-      },
+  setup(props) {
+    const showModal = ref(false);
+    const editMode = ref(false);
+    const channelData = ref({
+      ulid: null,
+      email: false,
+      sms: false,
+      social_media: false,
+      source: '',
+    });
+
+    const openCreateModal = () => {
+      editMode.value = false;
+      channelData.value = { ulid: null, email: false, sms: false, social_media: false, source: '' };
+      showModal.value = true;
     };
-  },
-  methods: {
-    editChannel(ulid) {
-      this.editMode = true;
-      const channel = this.channels.find(c => c.ulid === ulid);
+
+    const closeModal = () => {
+      showModal.value = false;
+    };
+
+    const editChannel = (ulid) => {
+      editMode.value = true; // Set edit mode to true
+      const channel = props.channels.find(c => c.ulid === ulid);
 
       if (channel) {
-        this.channelData = {
+        channelData.value = {
           ulid: channel.ulid,
           email: channel.email,
           sms: channel.sms,
           social_media: channel.social_media,
-          source: channel.source
+          source: channel.source,
         };
-        this.showModal = true;
+        showModal.value = true; // Show the modal
+      } else {
+        console.error('Channel not found for ULID:', ulid); // Debugging line
       }
-    },
-    async deleteChannel(id) {  // use 'id' instead of 'ulid' here
+    };
+
+    const deleteChannel = async (ulid) => {
+      console.log('Deleting channel with ULID:', ulid); // Debugging line
       if (confirm('Are you sure you want to delete this channel?')) {
-        await this.$inertia.delete(`/channels/${id}`);
-      }
-    },
-    async handleSubmit() {
-      try {
-        if (this.editMode) {
-          await this.$inertia.put(`/channels/${this.channelData.ulid}`, this.channelData);
-        } else {
-          await this.$inertia.post('/channels', this.channelData);
+        try {
+          await Inertia.delete(`/channels/${ulid}`);
+        } catch (error) {
+          console.error('Error deleting channel:', error);
+          alert('There was an error deleting the channel. Please try again later.');
         }
-        this.closeModal();
+      }
+    };
+
+    const handleSubmit = async () => {
+      try {
+        if (editMode.value) {
+          await Inertia.put(`/channels/${channelData.value.ulid}`, channelData.value);
+        } else {
+          await Inertia.post('/channels', channelData.value);
+        }
+        closeModal();
       } catch (error) {
         console.error('Error submitting form:', error);
       }
-    },
-    // ... rest of your methods ...
-  }
-};
+    };
+
+    return {
+      showModal,
+      editMode,
+      channelData,
+      openCreateModal,
+      closeModal,
+      editChannel,
+      deleteChannel,
+      handleSubmit,
+    };
+  },
+});
 </script>
+
 
 <style scoped>
 .container {

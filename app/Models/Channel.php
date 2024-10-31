@@ -20,9 +20,8 @@ class Channel extends Model
         return $this->hasMany(Subscriber::class);
     }
 
-    // Add the campaigns relationship
     public function campaigns()
     {
-        return $this->belongsToMany(Campaign::class, 'campaign_channel');
+        return $this->belongsToMany(Campaign::class, 'campaign_channel', 'channel_ulid', 'campaign_ulid');
     }
 }
