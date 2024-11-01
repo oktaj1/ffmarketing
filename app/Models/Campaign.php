@@ -11,7 +11,15 @@ class Campaign extends Model
 {
     use HasFactory, HasUlid;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'description',
+        'type',
+        'start_date',
+        'end_date',
+        'status',
+        'email_template_id', // If applicable
+    ];
 
     public function getRouteKeyName()
     {

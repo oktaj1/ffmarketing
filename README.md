@@ -64,3 +64,48 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+
+    handleSubmit() {
+      const url = this.editMode ? `/campaigns/${this.campaignData.id}` : '/campaigns';
+      const method = this.editMode ? 'put' : 'post';
+
+      // Verify Inertia method is available
+      if (typeof this.$inertia[method] !== 'function') {
+        console.error(`Inertia method ${method} is not defined.`);
+        return; // Stop execution if the method is not valid
+      }
+
+      console.log('Inertia method:', this.$inertia[method]);
+      console.log('Request URL:', url);
+      console.log('HTTP Method:', method);
+      console.log('Submitting data:', JSON.stringify(this.campaignData, null, 2));
+
+      this.$inertia
+        .put(`/campaigns/${this.campaignId}`, this.campaignData)
+        .then(response => {
+          // Handle successful response
+        })
+        .catch(error => {
+          console.error(error);
+          // Handle the error (e.g., show a notification)
+        });
+
+
+      this.$inertia[method](url, this.campaignData)
+        .then(() => {
+          this.showModal = false; // Close the modal
+          this.$emit('refresh'); // Trigger any refresh logic if needed
+        })
+        .catch(error => {
+          if (error.response) {
+            console.error('Error response data:', error.response.data);
+            console.error('Error status:', error.response.status);
+          } else {
+            console.error('Submission failed:', error);
+          }
+        });
+    },
+
+  

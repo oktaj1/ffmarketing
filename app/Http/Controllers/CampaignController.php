@@ -17,9 +17,13 @@ class CampaignController extends Controller
     public function index()
     {
         $campaigns = Campaign::with(['channels', 'emailTemplate'])->get();
+        $channels = Channel::all();  // Add this line to get all channels
+        $emailTemplates = EmailTemplate::all();  // Add this if you need email templates
 
         return Inertia::render('Campaigns/Index', [
-            'campaigns' => CampaignResource::collection($campaigns)->response()->getData(true)['data'],
+            'campaigns' => CampaignResource::collection($campaigns)->toArray(request()),
+            'channels' => $channels,  // Pass channels to the view
+            'emailTemplates' => $emailTemplates,  // Pass email templates if needed
         ]);
     }
 
@@ -53,12 +57,12 @@ class CampaignController extends Controller
         }
     }
 
-    public function update(UpdateCampaignRequest $request, $ulid)
+    public function update(UpdateCampaignRequest $request, Campaign $campaign)
     {
         try {
             DB::beginTransaction();
             
-            $campaign = Campaign::where('ulid', $ulid)->firstOrFail();
+            $campaign = Campaign::where('ulid', $campaign)->firstOrFail();
             $validated = $request->validated();
             
             $channels = $validated['channels'] ?? [];
@@ -81,28 +85,24 @@ class CampaignController extends Controller
                            ->with('error', 'Failed to update campaign: ' . $e->getMessage());
         }
     }
-
-    public function destroy($ulid)
+    public function destroy(Campaign $campaign): \Illuminate\Http\RedirectResponse
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
-            
-            $campaign = Campaign::where('ulid', $ulid)->firstOrFail();
-            
-            // Delete related records first
+            // Detach related channels before deleting the campaign
             $campaign->channels()->detach();
             $campaign->delete();
             
             DB::commit();
             
-            return redirect()->route('campaigns.index')
-                           ->with('success', 'Campaign deleted successfully.');
-                           
+            return redirect()->route('campaigns.index')->with('success', 'Campaign deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to delete campaign: ' . $e->getMessage());
-            return redirect()->back()
-                           ->with('error', 'Failed to delete campaign: ' . $e->getMessage());
+            
+            return redirect()->back()->with('error', 'Failed to delete campaign: ' . $e->getMessage());
         }
     }
+    
+
 }
