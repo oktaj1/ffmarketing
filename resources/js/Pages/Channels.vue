@@ -83,6 +83,7 @@ export default defineComponent({
     const showModal = ref(false);
     const editMode = ref(false);
     const channelData = ref({
+      id: null,
       ulid: null,
       email: false,
       sms: false,
@@ -90,36 +91,52 @@ export default defineComponent({
       source: '',
     });
 
+    const closeModal = () => {
+      showModal.value = false;
+      channelData.value = {
+        id: null,
+        ulid: null,
+        email: false,
+        sms: false,
+        social_media: false,
+        source: '',
+      };
+      editMode.value = false;
+    };
+
     const openCreateModal = () => {
       editMode.value = false;
-      channelData.value = { ulid: null, email: false, sms: false, social_media: false, source: '' };
+      channelData.value = {
+        id: null,
+        ulid: null,
+        email: false,
+        sms: false,
+        social_media: false,
+        source: '',
+      };
       showModal.value = true;
     };
 
-    const closeModal = () => {
-      showModal.value = false;
-    };
-
     const editChannel = (ulid) => {
-      editMode.value = true; // Set edit mode to true
+      editMode.value = true;
       const channel = props.channels.find(c => c.ulid === ulid);
 
       if (channel) {
         channelData.value = {
+          id: channel.id,
           ulid: channel.ulid,
           email: channel.email,
           sms: channel.sms,
           social_media: channel.social_media,
           source: channel.source,
         };
-        showModal.value = true; // Show the modal
+        showModal.value = true;
       } else {
-        console.error('Channel not found for ULID:', ulid); // Debugging line
+        console.error('Channel not found for ULID:', ulid);
       }
     };
 
     const deleteChannel = async (ulid) => {
-      console.log('Deleting channel with ULID:', ulid); // Debugging line
       if (confirm('Are you sure you want to delete this channel?')) {
         try {
           await Inertia.delete(`/channels/${ulid}`);
@@ -133,9 +150,25 @@ export default defineComponent({
     const handleSubmit = async () => {
       try {
         if (editMode.value) {
-          await Inertia.put(`/channels/${channelData.value.ulid}`, channelData.value);
+          // Create a new object with only the updatable fields
+          const updateData = {
+            email: channelData.value.email,
+            sms: channelData.value.sms,
+            social_media: channelData.value.social_media,
+            source: channelData.value.source,
+          };
+
+          await Inertia.put(`/channels/${channelData.value.id}`, updateData);
         } else {
-          await Inertia.post('/channels', channelData.value);
+          // For create, we can exclude id and ulid
+          const createData = {
+            email: channelData.value.email,
+            sms: channelData.value.sms,
+            social_media: channelData.value.social_media,
+            source: channelData.value.source,
+          };
+
+          await Inertia.post('/channels', createData);
         }
         closeModal();
       } catch (error) {

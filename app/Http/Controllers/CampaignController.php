@@ -3,38 +3,23 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Log;
 use App\Models\Channel;
 use App\Models\Campaign;
 use App\Models\EmailTemplate;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Resources\CampaignResource;
 use App\Http\Requests\StoreCampaignRequest;
 use App\Http\Requests\UpdateCampaignRequest;
-use Illuminate\Support\Facades\DB;
 
 class CampaignController extends Controller
 {
     public function index()
     {
-        $campaigns = Campaign::with(['channels', 'emailTemplate'])->get()
-            ->map(function ($campaign) {
-                return [
-                    'id' => $campaign->id,
-                    'ulid' => $campaign->ulid,
-                    'name' => $campaign->name,
-                    'description' => $campaign->description,
-                    'type' => $campaign->type,
-                    'start_date' => $campaign->start_date,
-                    'end_date' => $campaign->end_date,
-                    'status' => $campaign->status,
-                    'channels' => $campaign->channels,
-                    'email_template_id' => $campaign->email_template_id,
-                ];
-            });
+        $campaigns = Campaign::with(['channels', 'emailTemplate'])->get();
 
         return Inertia::render('Campaigns/Index', [
-            'campaigns' => $campaigns,
-            'emailTemplates' => EmailTemplate::all(),
-            'channels' => Channel::all(),
+            'campaigns' => CampaignResource::collection($campaigns)->response()->getData(true)['data'],
         ]);
     }
 
