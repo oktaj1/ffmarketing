@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use App\Traits\HasUlid;
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Campaign extends Model
 {
@@ -21,7 +21,7 @@ class Campaign extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::creating(function ($model) {
             if (empty($model->ulid)) {
                 $model->ulid = (string) Str::ulid();
@@ -31,7 +31,7 @@ class Campaign extends Model
 
     public function channels()
     {
-        return $this->belongsToMany(Channel::class, 'campaign_channel', 'campaign_ulid', 'channel_ulid');
+        return $this->belongsToMany(Channel::class);
     }
 
     public function emailTemplate()
