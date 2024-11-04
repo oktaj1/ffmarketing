@@ -15,7 +15,6 @@
     <table class="styled-table">
       <thead>
         <tr>
-          <!-- <th>ID</th> -->
           <th>Name</th>
           <th>Description</th>
           <th>Type</th>
@@ -26,7 +25,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="campaign in campaigns" :key="campaign.id">
+        <tr v-for="campaign in localCampaigns" :key="campaign.ulid">
           <td>{{ campaign.name }}</td>
           <td>{{ campaign.description }}</td>
           <td>{{ campaign.type }}</td>
@@ -69,7 +68,7 @@
             <label for="email-template">Email Template</label>
             <select v-model="campaignData.email_template_id" id="email-template" class="input-field">
               <option value="">Select an Email Template</option>
-              <option v-for="template in emailTemplates" :key="template.id" :value="template.id">
+              <option v-for="template in emailTemplates" :key="template.ulid" :value="template.ulid">
                 {{ template.name }}
               </option>
             </select>
@@ -77,10 +76,10 @@
 
           <div class="form-group">
             <label for="channels">Select Channels</label>
-            <div v-for="channel in channels" :key="channel.id" class="checkbox-group">
-              <input type="checkbox" :id="`channel-${channel.id}`" :value="channel.id"
+            <div v-for="channel in channels" :key="channel.ulid" class="checkbox-group">
+              <input type="checkbox" :id="`channel-${channel.ulid}`" :value="channel.ulid"
                 v-model="campaignData.channels" />
-              <label :for="`channel-${channel.id}`">{{ channel.source }}</label>
+              <label :for="`channel-${channel.ulid}`">{{ channel.source }}</label>
             </div>
           </div>
 
@@ -111,30 +110,18 @@
 </template>
 
 <script>
-
 export default {
   props: {
-    campaigns: {
-      type: Array,
-      required: true,
-      default: () => []
-    },
-    emailTemplates: {
-      type: Array,
-      required: true,
-      default: () => []
-    },
-    channels: {
-      type: Array,
-      required: true,
-      default: () => []
-    }
+    campaigns: Array,
+    emailTemplates: Array,
+    channels: Array
   },
   data() {
     return {
       showModal: false,
       editMode: false,
       campaignData: {
+        ulid: null, // Added ulid to campaignData
         name: '',
         description: '',
         type: 'email',
@@ -143,91 +130,77 @@ export default {
         status: 'active',
         email_template_id: null,
         channels: []
-      }
+      },
+      localCampaigns: []
     };
   },
   created() {
-    console.log(this.campaigns);
-
+    this.localCampaigns = [...this.campaigns];
+  },
+  watch: {
+    campaigns(newVal) {
+      this.localCampaigns = [...newVal];
+    }
   },
   methods: {
     openCreateModal() {
       this.editMode = false;
-      this.campaignData = {
-        name: '',
-        description: '',
-        type: 'email',
-        start_date: '',
-        end_date: '',
-        status: 'active',
-        email_template_id: null,
-        channels: []
-      };
+      this.resetCampaignData();
       this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+      this.resetCampaignData();
     },
     async deleteCampaign(id) {
       if (confirm('Are you sure you want to delete this campaign?')) {
         await this.$inertia.delete(`/campaigns/${id}`);
       }
     },
-    editCampaign(ulid) {
-      const campaignToEdit = this.campaigns.find(campaign => campaign.id === ulid);
+    editCampaign(id) {
+      const campaignToEdit = this.campaigns.find(campaign => campaign.id === id);
       if (campaignToEdit) {
         this.campaignData = {
-          id: campaignToEdit.id, // Include the ID here
-          name: campaignToEdit.name || '',
-          description: campaignToEdit.description || '',
-          type: campaignToEdit.type || 'email',
-          start_date: campaignToEdit.start_date || '',
-          end_date: campaignToEdit.end_date || '',
-          status: campaignToEdit.status || 'active',
-          email_template_id: campaignToEdit.email_template_id || null,
-          channels: campaignToEdit.channels || []
+          ...campaignToEdit,
+          channels: campaignToEdit.channels.map(channel => channel.id) || [],
+          ulid: campaignToEdit.id // Ensure the ulid is set
         };
         this.editMode = true;
-        this.showModal = true; // Show the modal for editing
+        this.showModal = true;
       }
     },
-
-
     handleSubmit() {
-      // Define the data object with all the fields you intend to submit
+      // Use the correct URL and method based on edit mode
+      const url = this.editMode ? `/campaigns/${this.campaignData.ulid}` : '/campaigns';
+      const method = this.editMode ? 'put' : 'post';
 
-      const data = {
-        id: this.campaignData.id,
-        name: this.campaignData.name,
-        description: this.campaignData.description,
-        type: this.campaignData.type,
-        start_date: this.campaignData.start_date,
-        end_date: this.campaignData.end_date,
-        status: this.campaignData.status,
-        email_template_id: this.campaignData.email_template_id,
-        channels: this.campaignData.channels,
-      };
-
-
-      console.log('Submitting data:', data);
-
-      // Ensure the visit method returns a promise so you can handle .then and .catch
-      this.$inertia.visit(`/campaigns/${this.campaignData.id}`, {
-        method: 'PUT',
-        data: data,
-        preserveState: true,
-        onSuccess: (response) => {
-          console.log('Campaign updated successfully:', response);
-          // Handle successful response here, e.g., close modal or show success message
+      this.$inertia[method](url, this.campaignData, {
+        onSuccess: () => {
           this.showModal = false;
+          this.$inertia.reload({ only: ['campaigns'] });
         },
         onError: (error) => {
           console.error('Error updating campaign:', error);
-
-        },
+        }
       });
+    },
+    resetCampaignData() {
+      this.campaignData = {
+        ulid: null, // Reset ulid as well
+        name: '',
+        description: '',
+        type: 'email',
+        start_date: '',
+        end_date: '',
+        status: 'active',
+        email_template_id: null,
+        channels: []
+      };
     }
-
   }
 };
 </script>
+
 
 <style scoped>
 /* Styles remain unchanged */
