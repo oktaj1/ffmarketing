@@ -12,14 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('campaign_channel', function (Blueprint $table) {
-            $table->ulid('campaign_ulid'); // Change to campaign_ulid
-            $table->ulid('channel_ulid');   // Change to channel_ulid
+            $table->id();
+            $table->foreignId('channel_id')->constrained()->onDelete('cascade');
+            $table->foreignId('campaign_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-            $table->softDeletes();
-
-            // Add foreign key constraints
-            $table->foreign('campaign_ulid')->references('ulid')->on('campaigns')->onDelete('cascade');
-            $table->foreign('channel_ulid')->references('ulid')->on('channels')->onDelete('cascade');
         });
     }
 };

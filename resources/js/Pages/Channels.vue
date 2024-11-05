@@ -139,7 +139,11 @@ export default defineComponent({
     const deleteChannel = async (ulid) => {
       if (confirm('Are you sure you want to delete this channel?')) {
         try {
-          await Inertia.delete(`/channels/${ulid}`);
+          await Inertia.delete(`/channels/${ulid}`, {
+            onSuccess: () => {
+              closeModal();
+            },
+          });
         } catch (error) {
           console.error('Error deleting channel:', error);
           alert('There was an error deleting the channel. Please try again later.');

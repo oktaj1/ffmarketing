@@ -29,11 +29,6 @@ Route::get('/', function () {
     })->name('logout');
 
     Route::resource('campaigns', CampaignController::class);
-
-    // Route::put('/campaigns/{campaign}/edit', [CampaignController::class, 'edit'])->name('campaigns.edit');
-
-    Route::resource('channels', ChannelController::class)->parameters([
-        'channels' => 'ulid',
-    ]);
+    
+    Route::resource('channels', ChannelController::class);
    
-// });

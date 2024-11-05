@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             ChannelSeeder::class,
+            CampaignSeeder::class,
             SubscriberSeeder::class,
             EmailTemplateSeeder::class,
         ]);

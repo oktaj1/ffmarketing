@@ -53,18 +53,21 @@ class ChannelController extends Controller
     }
 
 
-    public function destroy(Channel $channel): \Illuminate\Http\RedirectResponse
+    
+    public function destroy(Channel $channel): \Illuminate\Http\JsonResponse
     {
         DB::beginTransaction();
         try {
             $channel->campaigns()->detach();
             $channel->delete();
             DB::commit();
+    
+            return response()->json(['success' => true, 'message' => 'Channel deleted successfully.']);
         } catch (Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => $e->getMessage()], 500);
+    
+            return response()->json(['success' => false, 'message' => 'Failed to delete channel: ' . $e->getMessage()], 500);
         }
-
-        return redirect()->route('channels.index')->with('success', 'Channel deleted successfully.');
     }
+    
 }

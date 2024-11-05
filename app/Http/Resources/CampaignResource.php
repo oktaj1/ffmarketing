@@ -22,7 +22,7 @@ class CampaignResource extends JsonResource
             'start_date' => now()->format('Y-m-d'),
             'end_date' => now()->format('Y-m-d'),
             'status' => $this->status,
-            'channels' => $this->channels,
+            'channels' => ChannelResource::collection($this->channels),
             'email_template_id' => $this->email_template_id,
         ];
 
