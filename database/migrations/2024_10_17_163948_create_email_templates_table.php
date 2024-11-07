@@ -16,7 +16,6 @@ return new class extends Migration
                 $table->ulid('ulid');
                 $table->string('name'); 
                 $table->text('content'); 
-                $table->ulid('campaign_id')->constrained()->onDelete('cascade');
                 $table->timestamps(); 
                 $table->softDeletes();
         });

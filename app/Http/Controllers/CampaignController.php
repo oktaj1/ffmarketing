@@ -61,12 +61,11 @@ class CampaignController extends Controller
 
 
     
-    public function update(UpdateCampaignRequest $request, $ulid)
+    public function update(UpdateCampaignRequest $request, Campaign $campaign)
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
     
-            $campaign = Campaign::where('ulid', $ulid)->firstOrFail();
             $validated = $request->validated();
             
             // Handle channels separately
@@ -88,7 +87,6 @@ class CampaignController extends Controller
             $campaign->channels()->sync($channels);
     
             DB::commit();
-    
             return redirect()->route('campaigns.index')
                             ->with('success', 'Campaign updated successfully.');
                             
@@ -96,7 +94,7 @@ class CampaignController extends Controller
             DB::rollBack();
             Log::error('Failed to update campaign:', [
                 'error' => $e->getMessage(),
-                'campaign_id' => $ulid,
+                'campaign_id' => $campaign->id,
                 'trace' => $e->getTraceAsString()
             ]);
             

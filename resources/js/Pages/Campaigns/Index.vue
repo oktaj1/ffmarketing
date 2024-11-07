@@ -39,7 +39,7 @@
         </tr>
       </tbody>
     </table>
-
+    <child-component :campaigns.sync="campaigns" />
     <!-- Modal for creating or editing a campaign -->
     <div v-if="showModal" class="modal">
       <div class="modal-content">
@@ -121,7 +121,7 @@ export default {
       showModal: false,
       editMode: false,
       campaignData: {
-        ulid: null, // Added ulid to campaignData
+        ulid: null,
         name: '',
         description: '',
         type: 'email',
@@ -129,7 +129,8 @@ export default {
         end_date: '',
         status: 'active',
         email_template_id: null,
-        channels: []
+        channels: [],
+        campaigns: []
       },
       localCampaigns: []
     };
@@ -158,32 +159,31 @@ export default {
       }
     },
     editCampaign(id) {
-      const campaignToEdit = this.campaigns.find(campaign => campaign.id === id);
-      if (campaignToEdit) {
-        this.campaignData = {
-          ...campaignToEdit,
-          channels: campaignToEdit.channels.map(channel => channel.id) || [],
-          ulid: campaignToEdit.id // Ensure the ulid is set
-        };
-        this.editMode = true;
-        this.showModal = true;
-      }
-    },
-    handleSubmit() {
-      // Use the correct URL and method based on edit mode
-      const url = this.editMode ? `/campaigns/${this.campaignData.ulid}` : '/campaigns';
-      const method = this.editMode ? 'put' : 'post';
+  const campaignToEdit = this.campaigns.find(campaign => campaign.id === id);
+  if (campaignToEdit) {
+    this.campaignData = {
+      ...campaignToEdit,
+      channels: Array.isArray(campaignToEdit.channels)
+        ? campaignToEdit.channels.map(channel => channel.id)
+        : [],
+      ulid: campaignToEdit.id // Ensure the ulid is set
+    };
+    this.editMode = true;
+    this.showModal = true;
+  }
+},
 
-      this.$inertia[method](url, this.campaignData, {
-        onSuccess: () => {
-          this.showModal = false;
-          this.$inertia.reload({ only: ['campaigns'] });
-        },
-        onError: (error) => {
-          console.error('Error updating campaign:', error);
-        }
-      });
+onCampaignsUpdated(updatedCampaigns) {
+      this.campaigns = updatedCampaigns;
     },
+    async handleSubmit() {
+  if (this.editMode) {
+    await this.$inertia.patch(`/campaigns/${this.campaignData.ulid}`, this.campaignData);
+  } else {
+    await this.$inertia.post('/campaigns', this.campaignData);
+  }
+  this.closeModal();
+},
     resetCampaignData() {
       this.campaignData = {
         ulid: null, // Reset ulid as well

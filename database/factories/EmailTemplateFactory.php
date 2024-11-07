@@ -22,7 +22,6 @@ class EmailTemplateFactory extends Factory
             'ulid' => (string) Str::ulid(),
             'name' => $this->faker->name,
             'content' => $this->faker->paragraph,
-            'campaign_id' => Campaign::factory(),
         ];
     }
 }

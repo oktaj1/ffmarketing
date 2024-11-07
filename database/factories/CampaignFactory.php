@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Campaign;
+use App\Models\EmailTemplate;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -19,6 +20,7 @@ class CampaignFactory extends Factory
             'type' => $this->faker->randomElement(['email', 'sms']),
             'start_date' => $this->faker->date(),
             'end_date' => $this->faker->date(),
+            'email_template_id' => EmailTemplate::factory(),
             'status' => $this->faker->randomElement(['active', 'paused', 'completed']),
             'target_audience' => $this->faker->sentence,
             'audience_size' => $this->faker->numberBetween(1000, 5000),
