@@ -39,7 +39,7 @@
         </tr>
       </tbody>
     </table>
-    <child-component :campaigns.sync="campaigns" />
+    <!-- <child-component :campaigns.sync="campaigns" /> -->
     <!-- Modal for creating or editing a campaign -->
     <div v-if="showModal" class="modal">
       <div class="modal-content">
@@ -177,6 +177,7 @@ onCampaignsUpdated(updatedCampaigns) {
       this.campaigns = updatedCampaigns;
     },
     async handleSubmit() {
+      console.log(this.campaignData);
   if (this.editMode) {
     await this.$inertia.patch(`/campaigns/${this.campaignData.ulid}`, this.campaignData);
   } else {

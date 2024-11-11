@@ -35,15 +35,30 @@ class CampaignController extends Controller
             DB::beginTransaction();
             
             $validated = $request->validated();
-            $channels = $validated['channels'] ?? [];
+            
+            // Handle channels
+            $channelUlids = $validated['channels'] ?? [];
             unset($validated['channels']);
+            
+            // Convert email_template_id from ULID to ID if present
+            if (!empty($validated['email_template_id'])) {
+                $emailTemplate = EmailTemplate::where('ulid', $validated['email_template_id'])->first();
+                if ($emailTemplate) {
+                    $validated['email_template_id'] = $emailTemplate->id;
+                }
+            }
             
             Log::info('Creating campaign with data:', $validated);
             
             $campaign = Campaign::create($validated);
             
-            if (!empty($channels)) {
-                $campaign->channels()->attach($channels);
+            if (!empty($channelUlids)) {
+                // Convert ULIDs to actual channel IDs
+                $channelIds = Channel::whereIn('ulid', $channelUlids)
+                                   ->pluck('id')
+                                   ->toArray();
+                
+                $campaign->channels()->attach($channelIds);
             }
             
             DB::commit();

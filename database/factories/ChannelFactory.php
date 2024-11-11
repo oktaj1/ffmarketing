@@ -21,4 +21,3 @@ class ChannelFactory extends Factory
         ];
     }
 }
-

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('campaigns', function (Blueprint $table) {
-            $table->foreignId('email_template_id')->nullable()->constrained('email_templates')->after('name');
+            $table->foreignId('email_template_id')->nullable()->constrained('email_templates');
         });
     }
 };

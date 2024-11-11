@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EmailTemplate extends Model
 {
-    use HasUlid;
     use HasFactory;
+    use HasUlid;
     protected $guarded = [];
 
     public function campaign() : HasMany

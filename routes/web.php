@@ -29,6 +29,5 @@ Route::get('/', function () {
     })->name('logout');
 
     Route::resource('campaigns', CampaignController::class);
-    
     Route::resource('channels', ChannelController::class);
    
