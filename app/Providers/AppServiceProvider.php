@@ -2,30 +2,24 @@
 
 namespace App\Providers;
 
-use App\Models\Subscriber;
-use App\Observers\SubscriberObserver;
-use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\ServiceProvider;
 
-class EventServiceProvider extends ServiceProvider
+class AppServiceProvider extends ServiceProvider
 {
     /**
-     * The event listener mappings for the application.
-     *
-     * @var array
+     * Register any application services.
      */
-    protected $listen = [
-        // Your existing event listeners...
-    ];
+    public function register(): void
+    {
+        //
+    }
 
     /**
-     * Register any events for your application.
-     *
-     * @return void
+     * Bootstrap any application services.
      */
-    public function boot()
+    public function boot(): void
     {
-        parent::boot();
-
-        Subscriber::observe(SubscriberObserver::class);
+        Vite::prefetch(concurrency: 3);
     }
 }
