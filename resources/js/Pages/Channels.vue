@@ -1,69 +1,85 @@
 <template>
-  <div class="container">
-    <div class="button-container">
-      <button @click="navigateTo('subscribers')">Subscribers</button>
-      <button @click="navigateTo('channels')">Channels</button>
-      <button @click="navigateTo('campaigns')">Campaigns</button>
-      <button @click="navigateTo('settings')">Settings</button>
-      <button @click="logout">Logout</button>
-    </div>
-    <h1>Channels</h1>
-    <button class="button" @click="openCreateModal">Create New Channel</button>
+  <div class="dashboard-layout">
+    <!-- Header Section -->
+    <header class="dashboard-header">
+      <h1>Channels</h1>
+      <!-- Logout Button -->
+      <form @submit.prevent="logout" method="POST">
+        <button type="submit" class="logout-button">Logout</button>
+      </form>
+    </header>
 
-    <table class="styled-table">
-      <thead>
-        <tr>
-          <!-- <th>ID</th> -->
-          <th>Email</th>
-          <th>SMS</th>
-          <th>Social Media</th>
-          <th>Source</th>
-          <th>Subscribers</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="channel in channels" :key="channel.ulid">
-          <!-- <td>{{ channel.id }}</td> -->
-          <td>{{ channel.email ? 'Yes' : 'No' }}</td>
-          <td>{{ channel.sms ? 'Yes' : 'No' }}</td>
-          <td>{{ channel.social_media ? 'Yes' : 'No' }}</td>
-          <td>{{ channel.source }}</td>
-          <td>{{ channel.subscribers_count }}</td>
-          <td>
-            <button class="edit-button" @click="editChannel(channel.ulid)">Edit</button>
-            <button @click="deleteChannel(channel.id)">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Sidebar Section -->
+    <aside class="dashboard-sidebar">
+      <nav>
+        <ul>
+          <li><a href="/subscribers">Subscribers</a></li>
+          <li><a href="/channels">Channels</a></li>
+          <li><a href="/campaigns">Campaigns</a></li>
+          <li><a href="/settings">Settings</a></li>
+        </ul>
+      </nav>
+    </aside>
 
-    <!-- Modal for creating or editing a channel -->
-    <div v-if="showModal" class="modal">
-      <div class="modal-content">
-        <span class="close" @click="closeModal">&times;</span>
-        <h2>{{ editMode ? 'Edit Channel' : 'Create Channel' }}</h2>
-        <form @submit.prevent="handleSubmit">
-          <div class="form-group">
-            <label>Email:</label>
-            <input type="checkbox" v-model="channelData.email" />
-          </div>
-          <div class="form-group">
-            <label>SMS:</label>
-            <input type="checkbox" v-model="channelData.sms" />
-          </div>
-          <div class="form-group">
-            <label>Social Media:</label>
-            <input type="checkbox" v-model="channelData.social_media" />
-          </div>
-          <div class="form-group">
-            <label>Source:</label>
-            <input type="text" v-model="channelData.source" required />
-          </div>
-          <button type="submit" class="submit-button">{{ editMode ? 'Update' : 'Create' }}</button>
-        </form>
+    <!-- Main Content -->
+    <main class="dashboard-content">
+      <div class="button-container">
+        <button class="button" @click="openCreateModal">Create New Channel</button>
       </div>
-    </div>
+
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>SMS</th>
+            <th>Social Media</th>
+            <th>Source</th>
+            <th>Subscribers</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="channel in channels" :key="channel.ulid">
+            <td>{{ channel.email ? 'Yes' : 'No' }}</td>
+            <td>{{ channel.sms ? 'Yes' : 'No' }}</td>
+            <td>{{ channel.social_media ? 'Yes' : 'No' }}</td>
+            <td>{{ channel.source }}</td>
+            <td>{{ channel.subscribers_count }}</td>
+            <td>
+              <button class="edit-button" @click="editChannel(channel.ulid)">Edit</button>
+              <button class="delete-button" @click="deleteChannel(channel.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Modal for creating or editing a channel -->
+      <div v-if="showModal" class="modal">
+        <div class="modal-content">
+          <span class="close" @click="closeModal">&times;</span>
+          <h2>{{ editMode ? 'Edit Channel' : 'Create Channel' }}</h2>
+          <form @submit.prevent="handleSubmit">
+            <div class="form-group">
+              <label>Email:</label>
+              <input type="checkbox" v-model="channelData.email" />
+            </div>
+            <div class="form-group">
+              <label>SMS:</label>
+              <input type="checkbox" v-model="channelData.sms" />
+            </div>
+            <div class="form-group">
+              <label>Social Media:</label>
+              <input type="checkbox" v-model="channelData.social_media" />
+            </div>
+            <div class="form-group">
+              <label>Source:</label>
+              <input type="text" v-model="channelData.source" required />
+            </div>
+            <button type="submit" class="submit-button">{{ editMode ? 'Update' : 'Create' }}</button>
+          </form>
+        </div>
+      </div>
+    </main>
   </div>
 </template>
 
@@ -154,7 +170,6 @@ export default defineComponent({
     const handleSubmit = async () => {
       try {
         if (editMode.value) {
-          // Create a new object with only the updatable fields
           const updateData = {
             email: channelData.value.email,
             sms: channelData.value.sms,
@@ -164,7 +179,6 @@ export default defineComponent({
 
           await Inertia.put(`/channels/${channelData.value.id}`, updateData);
         } else {
-          // For create, we can exclude id and ulid
           const createData = {
             email: channelData.value.email,
             sms: channelData.value.sms,
@@ -194,37 +208,87 @@ export default defineComponent({
 });
 </script>
 
-
 <style scoped>
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-  background: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+.dashboard-layout {
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "sidebar content";
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
 }
 
-h1 {
-  font-size: 2rem;
-  color: #333;
-  text-align: center;
-  margin-bottom: 20px;
+.dashboard-header {
+  grid-area: header;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.button {
-  background-color: #007bff;
-  color: white;
+.dashboard-sidebar {
+  grid-area: sidebar;
+  background-color: #343a40;
+  color: #fff;
+  padding: 1rem;
+}
+
+.dashboard-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.dashboard-sidebar ul li {
+  margin-bottom: 1rem;
+}
+
+.dashboard-sidebar ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.dashboard-sidebar ul li a:hover {
+  text-decoration: underline;
+}
+
+.dashboard-content {
+  grid-area: content;
+  padding: 2rem;
+  background-color: #f1f3f5;
+}
+
+.logout-button {
+  background-color: #dc3545;
+  color: #fff;
   border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
+  padding: 0.5rem 1rem;
   cursor: pointer;
-  margin-bottom: 20px;
-  transition: background-color 0.3s;
+  font-size: 1rem;
+  border-radius: 4px;
 }
 
-.button:hover {
+.logout-button:hover {
+  background-color: #c82333;
+}
+
+.button-container {
+  margin-top: 20px;
+}
+
+button {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
   background-color: #0056b3;
 }
 
@@ -299,24 +363,6 @@ h1 {
   width: 80%;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.button-container {
-  margin-top: 20px;
-}
-
-button {
-  margin: 10px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007BFF;
-  color: white;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
 }
 
 .close {
