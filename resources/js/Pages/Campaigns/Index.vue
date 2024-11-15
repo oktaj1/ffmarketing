@@ -13,6 +13,7 @@
           <li><a href="/subscribers">Subscribers</a></li>
           <li><a href="/channels">Channels</a></li>
           <li><a href="/campaigns">Campaigns</a></li>
+          <li><a href="/email-templates">Email Templates</a></li>
           <li><a href="/settings">Settings</a></li>
         </ul>
       </nav>

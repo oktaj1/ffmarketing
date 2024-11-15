@@ -9,6 +9,7 @@ use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\EmailTemplateController;
 
 // Public Routes
 Route::get('/', function () {
@@ -47,6 +48,8 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('login'); // Redirect to the login page after logout
     })->name('logout');
 
-    
+
+    Route::resource('email-templates', EmailTemplateController::class);
+
 
 });

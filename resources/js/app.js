@@ -14,6 +14,8 @@ createInertiaApp({
             return import(`./Pages/Channels/${name.replace('Channels/', '')}.vue`);
         } else if (name.startsWith('Campaigns/')) {
             return import(`./Pages/Campaigns/${name.replace('Campaigns/', '')}.vue`);
+        } else if (name.startsWith('EmailTemplates/')) { // New condition for EmailTemplates
+            return import(`./Pages/EmailTemplates/${name.replace('EmailTemplates/', '')}.vue`);
         } else if (name === 'Login') {
             return import(`./Pages/Login/Login.vue`);
         } else if (name === 'Signup' || name === 'Auth/Register') {
@@ -30,3 +32,4 @@ createInertiaApp({
 });
 
 InertiaProgress.init();
+

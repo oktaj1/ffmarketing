@@ -11,7 +11,7 @@ class EmailTemplate extends Model
 {
     use HasFactory;
     use HasUlid;
-    protected $guarded = [];
+    protected $fillable = ['name', 'content'];
 
     public function campaign() : HasMany
     {
