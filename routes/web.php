@@ -37,19 +37,33 @@ Route::middleware(['auth'])->group(function () {
         return Inertia::render('Dashboard'); // Dashboard.vue
     })->name('dashboard');
 
+    // Subscribers Routes
     Route::resource('subscribers', SubscriberController::class);
+
+    // Campaigns Routes
     Route::resource('campaigns', CampaignController::class);
+
+    // Channels Routes
     Route::resource('channels', ChannelController::class);
 
+    // Settings Route
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
 
+    // Logout Route
     Route::post('/logout', function () {
         Auth::logout();
         return redirect()->route('login'); // Redirect to the login page after logout
     })->name('logout');
 
-
-    Route::resource('email-templates', EmailTemplateController::class);
-
-
+    // Email Templates Routes
+    Route::get('email-templates', [EmailTemplateController::class, 'index'])->name('emailTemplates.index');
+    Route::get('email-templates/create', [EmailTemplateController::class, 'create'])->name('emailTemplates.create');
+    Route::post('email-templates', [EmailTemplateController::class, 'store'])->name('emailTemplates.store');
+    Route::get('email-templates/{id}/edit', [EmailTemplateController::class, 'edit'])->name('emailTemplates.edit');
+    Route::get('email-templates/{id}', [EmailTemplateController::class, 'show'])->name('emailTemplates.show');
+    Route::put('email-templates/{id}', [EmailTemplateController::class, 'update'])->name('emailTemplates.update');
+    Route::get('/api/blade-code', [EmailTemplateController::class, 'loadBladeCode']);
+    Route::get('/preview/{style}', [EmailTemplateController::class, 'previewTemplate']);
+    Route::post('/save-blade-template', [EmailTemplateController::class, 'saveBladeTemplate']);
+    Route::delete('email-templates/{id}', [EmailTemplateController::class, 'destroy'])->name('emailTemplates.destroy');
 });

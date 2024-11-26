@@ -4,22 +4,36 @@ import { InertiaProgress } from '@inertiajs/progress';
 
 createInertiaApp({
     resolve: name => {
-        if (name === 'Dashboard') {
-            return import(`./Pages/dashboardlayout.vue`); // Updated path for DashboardLayout
+        if (name.startsWith('EmailTemplates/')) {
+            // Use a cleaner fallback for EmailTemplates pages
+            const pageName = name.replace('EmailTemplates/', '');
+            switch (pageName) {
+                case 'Create':
+                    return import('./Pages/EmailTemplates/Create.vue');
+                case 'Edit':
+                    return import('./Pages/EmailTemplates/Edit.vue');
+                case 'Show':
+                    return import('./Pages/EmailTemplates/Show.vue');
+                default:
+                    return import(`./Pages/EmailTemplates/${pageName}.vue`);
+            }
+        } else if (name === 'Dashboard') {
+            return import('./Pages/dashboardlayout.vue');
         } else if (name === 'Subscribers') {
-            return import(`./Pages/Subscribers/Index.vue`);
+            // Import the Index.vue for the Subscribers page
+            return import('./Pages/Subscribers/Index.vue');
         } else if (name.startsWith('Subscribers/')) {
-            return import(`./Pages/Subscribers/${name.replace('Subscribers/', '')}.vue`);
+            // Handle any other Subscribers sub-pages dynamically
+            const pageName = name.replace('Subscribers/', '');
+            return import(`./Pages/Subscribers/${pageName}.vue`);
         } else if (name.startsWith('Channels/')) {
             return import(`./Pages/Channels/${name.replace('Channels/', '')}.vue`);
         } else if (name.startsWith('Campaigns/')) {
             return import(`./Pages/Campaigns/${name.replace('Campaigns/', '')}.vue`);
-        } else if (name.startsWith('EmailTemplates/')) { // New condition for EmailTemplates
-            return import(`./Pages/EmailTemplates/${name.replace('EmailTemplates/', '')}.vue`);
         } else if (name === 'Login') {
-            return import(`./Pages/Login/Login.vue`);
+            return import('./Pages/Login/Login.vue');
         } else if (name === 'Signup' || name === 'Auth/Register') {
-            return import(`./Pages/Auth/Register.vue`); // Adjusted path
+            return import('./Pages/Auth/Register.vue');
         } else {
             return import(`./Pages/${name}.vue`);
         }
@@ -31,5 +45,5 @@ createInertiaApp({
     },
 });
 
+// Initialize the Inertia.js progress bar
 InertiaProgress.init();
-

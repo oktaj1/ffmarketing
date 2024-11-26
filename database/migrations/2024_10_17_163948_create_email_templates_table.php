@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('email_templates', function (Blueprint $table) {
                 $table->id('id');
                 $table->ulid('ulid');
-                $table->string('name'); 
-                $table->text('content'); 
-                $table->timestamps(); 
-                $table->softDeletes();
+                $table->string('name');
+                $table->text('content'); // Store HTML content
+                $table->string('image_path')->nullable(); // Store image path (if uploaded)
+                $table->timestamps();
         });
     }
 };

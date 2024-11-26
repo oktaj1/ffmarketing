@@ -1,50 +1,32 @@
 <template>
-  <div class="app-container">
-    <!-- Sidebar Navigator -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <h2>Dashboard</h2>
-      </div>
-      <nav class="sidebar-nav">
-        <ul>
-          <li><a href="/campaigns">Campaigns</a></li>
-          <li><a href="/subscribers">Subscribers</a></li>
-          <li><a href="/channels">Channels</a></li>
-          <li><a href="/email-templates">Email Templates</a></li>
-        </ul>
-      </nav>
-      <button class="logout-btn" @click="logout">Logout</button>
-    </aside>
+  <div class="container">
+    <div class="header">
+      <h2>Select a Blade Template</h2>
+    </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <div class="header">
-        <h2>Select a Blade Template</h2>
+    <div class="template-container">
+      <div v-for="template in templates" :key="template.name" class="template-option"
+        @click="selectTemplate(template.style)">
+        <img :src="`/images/${template.style}-preview.jpg`" :alt="template.name" class="template-preview" />
+        <div class="template-label">{{ template.name }}</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="code-view">
+        <h3>Blade Code</h3>
+        <textarea v-model="editableBladeCode" ref="codeEditor" class="code-editor"
+          @input="syncPreviewWithCode"></textarea>
+        <button @click="saveTemplate" class="save-btn">Save Template</button>
       </div>
 
-      <div class="template-container">
-        <div v-for="template in templates" :key="template.name" class="template-option"
-          @click="selectTemplate(template.style)">
-          <img :src="`/images/${template.style}-preview.jpg`" :alt="template.name" class="template-preview" />
-          <div class="template-label">{{ template.name }}</div>
-        </div>
+      <div class="preview-view">
+        <h3>Preview</h3>
+        <div class="editable-preview" ref="previewContainer" v-html="renderedPreview" @click="handleElementClick"
+          contenteditable="true" @input="syncCodeWithPreview"></div>
+        <p v-if="!renderedPreview">Select a Blade template to preview it</p>
       </div>
-
-      <div class="content">
-        <div class="code-view">
-          <h3>Blade Code</h3>
-          <textarea v-model="editableBladeCode" ref="codeEditor" class="code-editor"
-            @input="syncPreviewWithCode"></textarea>
-          <button @click="saveTemplate" class="save-btn">Save Template</button>
-        </div>
-
-        <div class="preview-view">
-          <h3>Preview</h3>
-          <div class="editable-preview" ref="previewContainer" v-html="renderedPreview" @click="handleElementClick"
-            contenteditable="true" @input="syncCodeWithPreview"></div>
-        </div>
-      </div>
-    </main>
+    </div>
   </div>
 </template>
 
@@ -101,9 +83,6 @@ export default {
         alert("Failed to save template");
       }
     },
-    logout() {
-      alert("Logging out...");
-    },
     handleElementClick(event) {
       const target = event.target;
       if (target.hasAttribute("data-editable")) {
@@ -155,141 +134,95 @@ export default {
 </script>
 
 <style scoped>
-.app-container {
-  display: flex;
-  height: 100vh;
-}
-
-/* Sidebar styles */
-.sidebar {
-  width: 250px;
-  background-color: #343a40;
-  color: #fff;
+.container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 20px;
-}
-
-.sidebar-header {
-  font-size: 1.5rem;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.sidebar-nav ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar-nav li {
-  margin-bottom: 10px;
-}
-
-.sidebar-nav a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 1rem;
-}
-
-.sidebar-nav a:hover {
-  text-decoration: underline;
-}
-
-.logout-btn {
-  background-color: #dc3545;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 5px;
-  text-align: center;
-}
-
-.logout-btn:hover {
-  background-color: #c82333;
-}
-
-/* Main Content styles */
-.main-content {
-  flex: 1;
-  padding: 20px;
-  overflow: auto;
+  gap: 20px;
 }
 
 .header {
-  margin-bottom: 20px;
   text-align: center;
+  margin-bottom: 20px;
 }
 
 .template-container {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.template-option {
-  cursor: pointer;
-  text-align: center;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
 }
 
 .template-preview {
-  width: 150px;
-  /* Increased size */
-  height: auto;
-  margin-bottom: 5px;
-  /* Reduced margin */
+  width: 300px;
+  height: 200px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 3px solid transparent;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.template-preview:hover {
+  transform: scale(1.1);
+  border-color: #007bff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.template-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  margin: 20px;
 }
 
 .template-label {
   font-size: 1rem;
+  font-weight: bold;
+  color: #333;
 }
 
 .content {
   display: flex;
+  justify-content: space-between;
   gap: 20px;
 }
 
-.code-view,
-.preview-view {
-  flex: 1;
+.code-view {
+  width: 50%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background: #f5f5f5;
 }
 
 .code-editor {
   width: 100%;
-  height: 300px;
-  padding: 10px;
-  font-size: 1rem;
+  height: 400px;
+  font-family: monospace;
+  white-space: pre;
+  overflow: auto;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  resize: none;
+  background-color: #fff;
+  outline: none;
 }
 
-.save-btn {
-  display: block;
-  margin-top: 10px;
-  background-color: #28a745;
-  color: #fff;
-  border: none;
+.preview-view {
+  width: 50%;
   padding: 10px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.save-btn:hover {
-  background-color: #218838;
-}
-
-.editable-preview {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  min-height: 300px;
+  border: 1px solid #ddd;
+  background: #fff;
+  min-height: 400px;
   overflow: auto;
 }
 
-.editable-preview[contenteditable] {
-  outline: none;
+.editable-preview {
+  width: 100%;
+  min-height: 400px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  overflow: auto;
 }
 </style>
