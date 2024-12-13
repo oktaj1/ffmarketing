@@ -24,11 +24,19 @@
 
       <button type="submit">Save Template</button>
     </form>
+
+    <!-- Notifications Component -->
+    <Notifications />
   </div>
 </template>
 
 <script>
+import { useNotification, Notifications } from '@kyvg/vue3-notification';
+
 export default {
+  components: {
+    Notifications,
+  },
   data() {
     return {
       template: {
@@ -36,6 +44,12 @@ export default {
         style: 'style1',
         content: '',
       },
+    };
+  },
+  setup() {
+    const { notify } = useNotification();
+    return {
+      notify,
     };
   },
   methods: {
@@ -53,109 +67,30 @@ export default {
           throw new Error('Failed to save template');
         }
 
-        alert('Template saved successfully!');
-        // Optionally, redirect or clear the form
+        // Use the same notification method as "Show Notifications" button
+        this.notify({
+          title: 'Success',
+          text: 'Template saved successfully!',
+          type: 'success', // Use the success notification type
+          duration: 3000, // Duration for the notification to stay on screen
+          position: 'top-right', // Position of the notification
+        });
+
+        // Optionally, reset the form
         this.template = { name: '', style: 'style1', content: '' };
       } catch (error) {
         console.error('Error saving template:', error);
-        alert('Error saving template');
+
+        // Use the same error notification method
+        this.notify({
+          title: 'Error',
+          text: 'Error saving template',
+          type: 'error', // Use the error notification type
+          duration: 3000, // Duration for the notification to stay on screen
+          position: 'top-right', // Position of the notification
+        });
       }
     },
   },
 };
 </script>
-
-
-<style scoped>
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.template-container {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
-  margin-bottom: 30px;
-}
-
-.template-preview {
-  width: 300px;
-  height: 200px;
-  border-radius: 10px;
-  object-fit: cover;
-  border: 3px solid transparent;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.template-preview:hover {
-  transform: scale(1.1);
-  border-color: #007bff;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.template-option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 10px;
-  margin: 20px;
-}
-
-.template-label {
-  font-size: 1rem;
-  font-weight: bold;
-  color: #333;
-}
-
-.content {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.code-view {
-  width: 50%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  background: #f5f5f5;
-}
-
-.code-editor {
-  width: 100%;
-  height: 400px;
-  font-family: monospace;
-  white-space: pre;
-  overflow: auto;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  outline: none;
-}
-
-.preview-view {
-  width: 50%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  background: #fff;
-  min-height: 400px;
-  overflow: auto;
-}
-
-.editable-preview {
-  width: 100%;
-  min-height: 400px;
-  border: 1px solid #ddd;
-  padding: 10px;
-  overflow: auto;
-}
-</style>

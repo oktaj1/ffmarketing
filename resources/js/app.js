@@ -1,11 +1,11 @@
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
+import Notifications from '@kyvg/vue3-notification'
 
 createInertiaApp({
     resolve: name => {
         if (name.startsWith('EmailTemplates/')) {
-            // Use a cleaner fallback for EmailTemplates pages
             const pageName = name.replace('EmailTemplates/', '');
             switch (pageName) {
                 case 'Create':
@@ -20,10 +20,8 @@ createInertiaApp({
         } else if (name === 'Dashboard') {
             return import('./Pages/dashboardlayout.vue');
         } else if (name === 'Subscribers') {
-            // Import the Index.vue for the Subscribers page
             return import('./Pages/Subscribers/Index.vue');
         } else if (name.startsWith('Subscribers/')) {
-            // Handle any other Subscribers sub-pages dynamically
             const pageName = name.replace('Subscribers/', '');
             return import(`./Pages/Subscribers/${pageName}.vue`);
         } else if (name.startsWith('Channels/')) {
@@ -35,11 +33,9 @@ createInertiaApp({
         } else if (name === 'Signup' || name === 'Auth/Register') {
             return import('./Pages/Auth/Register.vue');
         } else if (name.startsWith('Settings/')) {
-            // Handle any Settings sub-pages dynamically
             const pageName = name.replace('Settings/', '');
             return import(`./Pages/Settings/${pageName}.vue`);
         } else if (name === 'Settings') {
-            // Import the Index.vue for the Settings page
             return import('./Pages/Settings/Index.vue');
         } else {
             return import(`./Pages/${name}.vue`);
@@ -48,9 +44,13 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
-            .mount(el);
+            .use(Notifications)
+            .mount(el)
     },
 });
 
 // Initialize the Inertia.js progress bar
-InertiaProgress.init();
+InertiaProgress.init({
+    color: '#29d',   // Change the progress bar color
+    showSpinner: true // Show the spinner when loading
+});

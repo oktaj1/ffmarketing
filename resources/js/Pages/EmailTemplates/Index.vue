@@ -1,4 +1,5 @@
   <template>
+    <Notifications />
     <div class="app-container">
       <!-- Sidebar Navigator -->
       <aside class="sidebar">
@@ -29,7 +30,7 @@
             <div class="template-label">{{ template.name }}</div>
           </div>
         </div>
-
+        <!-- <button @click="showNotification">Show Notification (Debug)</button> -->
         <div class="content">
           <div class="code-view">
             <h3>Blade Code</h3>
@@ -49,6 +50,8 @@
   </template>
 
 <script>
+import { notify } from '@kyvg/vue3-notification';
+
 export default {
   data() {
     return {
@@ -63,6 +66,30 @@ export default {
     };
   },
   methods: {
+    showNotification() {
+      try {
+        notify({
+          title: 'Success',
+          text: 'Your template have been saved successfully on database',
+          type: 'success',
+          duration: 3000,
+        });
+      } catch (error) {
+        console.error('Notification error:', error);
+      }
+    },
+    showToastError(message) {
+      try {
+        notify({
+          title: 'Error',
+          text: message,
+          type: 'error',
+          duration: 3000,
+        });
+      } catch (error) {
+        console.error('Error notification error:', error);
+      }
+    },
     selectTemplate(style) {
       this.selectedBlade = style;
       this.loadBlade();
@@ -81,6 +108,8 @@ export default {
         console.error("Error fetching Blade code:", error);
         this.editableBladeCode = "Error loading blade code";
         this.renderedPreview = "";
+
+        this.showToastError("Error loading blade code");
       }
     },
     async saveTemplate() {
@@ -91,22 +120,21 @@ export default {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            name: "Custom Template", // Dynamic name you want to pass
-            content: this.editableBladeCode, // Blade code content you are typing
-            style: this.selectedBlade, // Style name (e.g., style1, style2)
+            name: "Custom Template",
+            content: this.editableBladeCode,
+            style: this.selectedBlade,
           }),
         });
 
         if (!response.ok) throw new Error("Failed to save template");
         const data = await response.json();
-        alert("Template saved successfully!");
-        console.log("Saved template:", data); // Log the saved template to check the response
+        this.showNotification();
+        console.log("Saved template:", data);
       } catch (error) {
         console.error("Save error:", error);
-        alert("Failed to save template");
+        this.showToastError("Failed to save template");
       }
-    }
-    ,
+    },
     logout() {
       alert("Logging out...");
     },
@@ -158,8 +186,8 @@ export default {
     },
   },
 };
-</script>
 
+</script>
 <style scoped>
 .app-container {
   display: flex;
