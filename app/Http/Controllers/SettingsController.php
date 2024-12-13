@@ -2,34 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class SettingsController extends Controller
 {
-    public function show()
+    public function index()
     {
-        // Assuming you're fetching user-specific settings
-        // return response()->json(['email' => auth()->user()->email]);
+        return Inertia::render('Settings');
     }
 
-    public function update(Request $request)
+    public function updatePassword(Request $request)
     {
-        // Assuming you're updating user-specific settings
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'nullable|min:6',
+            'old_password' => 'required',
+            'new_password' => 'required|confirmed|min:8',
         ]);
 
-        // $user = auth()->user();
-        // $user->email = $request->input('email');
-        
-        // if ($request->filled('password')) {
-        //     $user->password = bcrypt($request->input('password'));
-        // }
+        // Check if the old password is correct
+        if (!Hash::check($request->old_password, Auth::user()->password)) {
+            return back()->withErrors(['old_password' => 'The old password is incorrect.']);
+        }
 
-        // $user->save();
+        // Update the password
+        Auth::user()->update([
+            'password' => Hash::make($request->new_password),
+        ]);
 
-        // return response()->json($user);
+        return redirect()->route('settings.index')->with('success', 'Password updated successfully.');
     }
 }

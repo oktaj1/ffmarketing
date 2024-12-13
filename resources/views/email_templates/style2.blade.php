@@ -11,7 +11,7 @@
     <div class="email-template">
         <!-- Header Section -->
         <div data-section="header" class="editable-section header">
-            <h1 data-editable="title">Your Email Title Here</h1>
+            <h1 data-editable="title">Your Email aaaTitle Here</h1>
         </div>
 
         <!-- Body Section -->

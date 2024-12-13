@@ -1,52 +1,52 @@
-<template>
-  <div class="app-container">
-    <!-- Sidebar Navigator -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <h2>Dashboard</h2>
-      </div>
-      <nav class="sidebar-nav">
-        <ul>
-          <li><a href="/campaigns">Campaigns</a></li>
-          <li><a href="/subscribers">Subscribers</a></li>
-          <li><a href="/channels">Channels</a></li>
-          <li><a href="/email-templates">Email Templates</a></li>
-        </ul>
-      </nav>
-      <button class="logout-btn" @click="logout">Logout</button>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      <div class="header">
-        <h2>Select a Blade Template</h2>
-      </div>
-
-      <div class="template-container">
-        <div v-for="template in templates" :key="template.name" class="template-option"
-          @click="selectTemplate(template.style)">
-          <img :src="`/images/${template.style}-preview.jpg`" :alt="template.name" class="template-preview" />
-          <div class="template-label">{{ template.name }}</div>
+  <template>
+    <div class="app-container">
+      <!-- Sidebar Navigator -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <!-- <h2>Dashboard</h2> -->
         </div>
-      </div>
+        <nav class="sidebar-nav">
+          <ul>
+            <li><a href="/campaigns">Campaigns</a></li>
+            <li><a href="/subscribers">Subscribers</a></li>
+            <li><a href="/channels">Channels</a></li>
+            <li><a href="/email-templates">Email Templates</a></li>
+          </ul>
+        </nav>
+        <button class="logout-btn" @click="logout">Logout</button>
+      </aside>
 
-      <div class="content">
-        <div class="code-view">
-          <h3>Blade Code</h3>
-          <textarea v-model="editableBladeCode" ref="codeEditor" class="code-editor"
-            @input="syncPreviewWithCode"></textarea>
-          <button @click="saveTemplate" class="save-btn">Save Template</button>
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="header">
+          <h2>Select a Blade Template</h2>
         </div>
 
-        <div class="preview-view">
-          <h3>Preview</h3>
-          <div class="editable-preview" ref="previewContainer" v-html="renderedPreview" @click="handleElementClick"
-            contenteditable="true" @input="syncCodeWithPreview"></div>
+        <div class="template-container">
+          <div v-for="template in templates" :key="template.name" class="template-option"
+            @click="selectTemplate(template.style)">
+            <img :src="`/images/${template.style}-preview.jpg`" :alt="template.name" class="template-preview" />
+            <div class="template-label">{{ template.name }}</div>
+          </div>
         </div>
-      </div>
-    </main>
-  </div>
-</template>
+
+        <div class="content">
+          <div class="code-view">
+            <h3>Blade Code</h3>
+            <textarea v-model="editableBladeCode" ref="codeEditor" class="code-editor"
+              @input="syncPreviewWithCode"></textarea>
+            <button @click="saveTemplate" class="save-btn">Save Template</button>
+          </div>
+
+          <div class="preview-view">
+            <h3>Preview</h3>
+            <div class="editable-preview" ref="previewContainer" v-html="renderedPreview" @click="handleElementClick"
+              contenteditable="true" @input="syncCodeWithPreview"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </template>
 
 <script>
 export default {
@@ -87,20 +87,26 @@ export default {
       try {
         const response = await fetch("/api/save-blade-template", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
-            style: this.selectedBlade,
-            content: this.editableBladeCode,
+            name: "Custom Template", // Dynamic name you want to pass
+            content: this.editableBladeCode, // Blade code content you are typing
+            style: this.selectedBlade, // Style name (e.g., style1, style2)
           }),
         });
 
         if (!response.ok) throw new Error("Failed to save template");
+        const data = await response.json();
         alert("Template saved successfully!");
+        console.log("Saved template:", data); // Log the saved template to check the response
       } catch (error) {
         console.error("Save error:", error);
         alert("Failed to save template");
       }
-    },
+    }
+    ,
     logout() {
       alert("Logging out...");
     },

@@ -1,32 +1,29 @@
 <template>
-  <div class="container">
-    <div class="header">
-      <h2>Select a Blade Template</h2>
-    </div>
+  <div>
+    <h1>Create a New Email Template</h1>
 
-    <div class="template-container">
-      <div v-for="template in templates" :key="template.name" class="template-option"
-        @click="selectTemplate(template.style)">
-        <img :src="`/images/${template.style}-preview.jpg`" :alt="template.name" class="template-preview" />
-        <div class="template-label">{{ template.name }}</div>
-      </div>
-    </div>
-
-    <div class="content">
-      <div class="code-view">
-        <h3>Blade Code</h3>
-        <textarea v-model="editableBladeCode" ref="codeEditor" class="code-editor"
-          @input="syncPreviewWithCode"></textarea>
-        <button @click="saveTemplate" class="save-btn">Save Template</button>
+    <form @submit.prevent="saveTemplate">
+      <div>
+        <label for="name">Template Name</label>
+        <input v-model="template.name" id="name" type="text" required />
       </div>
 
-      <div class="preview-view">
-        <h3>Preview</h3>
-        <div class="editable-preview" ref="previewContainer" v-html="renderedPreview" @click="handleElementClick"
-          contenteditable="true" @input="syncCodeWithPreview"></div>
-        <p v-if="!renderedPreview">Select a Blade template to preview it</p>
+      <div>
+        <label for="style">Style</label>
+        <select v-model="template.style" required>
+          <option value="style1">Style 1</option>
+          <option value="style2">Style 2</option>
+          <option value="style3">Style 3</option>
+        </select>
       </div>
-    </div>
+
+      <div>
+        <label for="content">Template Content</label>
+        <textarea v-model="template.content" id="content" required></textarea>
+      </div>
+
+      <button type="submit">Save Template</button>
+    </form>
   </div>
 </template>
 
@@ -34,104 +31,40 @@
 export default {
   data() {
     return {
-      templates: [
-        { name: "Style 1", style: "style1" },
-        { name: "Style 2", style: "style2" },
-        { name: "Style 3", style: "style3" },
-      ],
-      selectedBlade: null,
-      editableBladeCode: "",
-      renderedPreview: "",
+      template: {
+        name: '',
+        style: 'style1',
+        content: '',
+      },
     };
   },
   methods: {
-    selectTemplate(style) {
-      this.selectedBlade = style;
-      this.loadBlade();
-    },
-    async loadBlade() {
-      if (!this.selectedBlade) return;
-
-      try {
-        const response = await fetch(`/api/blade-code?style=${this.selectedBlade}`);
-        if (!response.ok) throw new Error("Failed to fetch blade code");
-
-        const data = await response.json();
-        this.editableBladeCode = data.blade_code;
-        this.renderedPreview = data.preview_html;
-      } catch (error) {
-        console.error("Error fetching Blade code:", error);
-        this.editableBladeCode = "Error loading blade code";
-        this.renderedPreview = "";
-      }
-    },
     async saveTemplate() {
       try {
-        const response = await fetch("/api/save-blade-template", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            style: this.selectedBlade,
-            content: this.editableBladeCode,
-          }),
+        const response = await fetch('/email-templates', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(this.template),
         });
 
-        if (!response.ok) throw new Error("Failed to save template");
-        alert("Template saved successfully!");
+        if (!response.ok) {
+          throw new Error('Failed to save template');
+        }
+
+        alert('Template saved successfully!');
+        // Optionally, redirect or clear the form
+        this.template = { name: '', style: 'style1', content: '' };
       } catch (error) {
-        console.error("Save error:", error);
-        alert("Failed to save template");
-      }
-    },
-    handleElementClick(event) {
-      const target = event.target;
-      if (target.hasAttribute("data-editable")) {
-        const dataEditable = target.getAttribute("data-editable");
-        this.highlightBladeTag(dataEditable);
-        this.scrollCodeToView(dataEditable);
-      }
-    },
-    highlightBladeTag(dataEditable) {
-      if (!dataEditable) return;
-
-      const lines = this.editableBladeCode.split("\n");
-      const match = lines.find((line) => line.includes(`data-editable="${dataEditable}"`));
-
-      if (match) {
-        const textarea = this.$refs.codeEditor;
-        const startIndex = this.editableBladeCode.indexOf(match);
-        const endIndex = startIndex + match.length;
-
-        textarea.setSelectionRange(startIndex, endIndex);
-        textarea.focus();
-      }
-    },
-    syncPreviewWithCode() {
-      const tempDiv = document.createElement("div");
-      tempDiv.innerHTML = this.editableBladeCode;
-
-      this.renderedPreview = tempDiv.innerHTML;
-    },
-    syncCodeWithPreview(event) {
-      const tempDiv = this.$refs.previewContainer;
-      this.editableBladeCode = tempDiv.innerHTML;
-    },
-    scrollCodeToView(dataEditable) {
-      const textarea = this.$refs.codeEditor;
-      const lines = this.editableBladeCode.split("\n");
-      const matchingLine = lines.find((line) => line.includes(`data-editable="${dataEditable}"`));
-
-      if (matchingLine) {
-        const lineIndex = lines.indexOf(matchingLine);
-        const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight, 10);
-        const scrollPosition = lineIndex * lineHeight;
-
-        textarea.scrollTop = scrollPosition;
+        console.error('Error saving template:', error);
+        alert('Error saving template');
       }
     },
   },
 };
 </script>
+
 
 <style scoped>
 .container {

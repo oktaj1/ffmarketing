@@ -24,25 +24,26 @@ class EmailTemplateController extends Controller
 
     public function store(Request $request)
     {
-        // Validate the request data
+        // Validate the incoming request
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'html_content' => 'required|string',
-            'style' => 'required|string|in:style1,style2,style3', // Validate style selection
+            'style' => 'required|string|in:style1,style2,style3',
+            'content' => 'required|string',
         ]);
 
-        // Create the email template in the database
-        EmailTemplate::create([
+        // Create and save the new email template to the database
+        $emailTemplate = EmailTemplate::create([
             'name' => $validated['name'],
-            'description' => $validated['description'] ?? null, // Handle nullable description
-            'html_content' => $validated['html_content'],
             'style' => $validated['style'],
+            'content' => $validated['content'],
+            'image_path' => null,  // Optionally, add image path logic here
         ]);
 
-        // Redirect back to the email templates index
-        return redirect()->route('emailTemplates.index')->with('success', 'Email Template Created Successfully.');
+        // Return a response indicating success
+        return response()->json(['message' => 'Email template created successfully', 'data' => $emailTemplate], 201);
     }
+
+    
 
     public function edit($id)
     {
@@ -78,27 +79,28 @@ class EmailTemplateController extends Controller
     }
     
 
-    public function saveBladeTemplate(Request $request)
+// In EmailTemplateController.php
+public function saveBladeTemplate(Request $request)
     {
-        $style = $request->input('style');
-        $content = $request->input('content');
-    
-        $templatePath = resource_path("views/email_templates/{$style}.blade.php");
-    
-        try {
-            File::put($templatePath, $content);
-    
-            return response()->json([
-                'message' => 'Template saved successfully',
-                'path' => $templatePath
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to save template',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'content' => 'required|string',
+            'style' => 'required|string|in:style1,style2,style3', // Styles that you allow
+        ]);
+
+        $emailTemplate = EmailTemplate::create([
+            'name' => $validated['name'],
+            'content' => $validated['content'],
+            'style' => $validated['style'],
+        ]);
+
+        return response()->json([
+            'message' => 'Template saved successfully!',
+            'emailTemplate' => $emailTemplate
+        ]);
     }
+
+
 
     public function previewTemplate($style)
     {

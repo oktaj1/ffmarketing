@@ -48,6 +48,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Settings Route
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.updatePassword');
 
     // Logout Route
     Route::post('/logout', function () {
@@ -64,6 +65,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('email-templates/{id}', [EmailTemplateController::class, 'update'])->name('emailTemplates.update');
     Route::get('/api/blade-code', [EmailTemplateController::class, 'loadBladeCode']);
     Route::get('/preview/{style}', [EmailTemplateController::class, 'previewTemplate']);
+    Route::post('email-templates', [EmailTemplateController::class, 'store']);
     Route::post('/save-blade-template', [EmailTemplateController::class, 'saveBladeTemplate']);
     Route::delete('email-templates/{id}', [EmailTemplateController::class, 'destroy'])->name('emailTemplates.destroy');
 });

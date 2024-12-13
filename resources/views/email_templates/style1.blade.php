@@ -1,60 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Style 1</title>
+    <title>Simple Template</title>
 </head>
 <body>
-    <h1>Style 1 Template</h1>
-    <p>This is the preview for Style 1.</p>
+    <h1>Unrelated Content</h1>
+    <p>This content is outside the template and should not be affected.</p>
 
-    <!-- Email Template Sections -->
-    <div class="email-template">
+    <!-- Template Container -->
+    <div id="simple-template">
         <!-- Header Section -->
         <div data-section="header" class="editable-section header">
-            <h1 data-editable="title">Your Email Title Here</h1>
+            <h1 data-editable="title">Welcome to My Simple Page</h1>
         </div>
 
         <!-- Body Section -->
         <div data-section="body" class="editable-section body">
-            <p data-editable="content">Email body content goes here. This section can be customized with the actual content for your email template.</p>
+            <p data-editable="content">This is a short paragraph that provides some description.</p>
         </div>
 
         <!-- Footer Section -->
         <div data-section="footer" class="editable-section footer">
-            <p data-editable="signature">Best regards,<br>Your Company Name</p>
+            <p data-editable="signature">Thank you for visiting!<br>Your Name or Company</p>
         </div>
     </div>
 
     <!-- Inline CSS -->
     <style>
-        .email-template {
-            background-color: lightblue;
-            color: darkblue;
+        /* Scoped styles for the template */
+        #simple-template {
+            background-color: #add8e6; /* Light blue background */
+            color: #333;
             font-family: Arial, sans-serif;
-            margin: 0;
+            margin: 20px auto;
             padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-width: 600px;
         }
-        .email-template .header, .email-template .body, .email-template .footer {
+
+        #simple-template .header,
+        #simple-template .body,
+        #simple-template .footer {
             margin-bottom: 20px;
         }
-        .email-template .header h1, .email-template .footer p {
+
+        #simple-template .header h1,
+        #simple-template .footer p {
             text-align: center;
         }
-        .email-template .body p {
+
+        #simple-template .body p {
             line-height: 1.6;
+            text-align: justify;
         }
-        .email-template .footer {
-            border-top: 1px solid #ddd;
+
+        #simple-template .footer {
+            border-top: 1px solid #ccc;
             padding-top: 15px;
-            font-style: italic;
+            font-size: 0.9rem;
             color: #555;
+            text-align: center;
         }
-        .editable-section {
+
+        #simple-template .editable-section {
             position: relative;
             transition: background-color 0.3s ease;
         }
-        .editable-section:hover {
-            background-color: rgba(255, 255, 0, 0.3);
+
+        #simple-template .editable-section:hover {
+            background-color: rgba(0, 123, 255, 0.1);
             cursor: pointer;
         }
     </style>

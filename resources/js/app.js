@@ -34,6 +34,13 @@ createInertiaApp({
             return import('./Pages/Login/Login.vue');
         } else if (name === 'Signup' || name === 'Auth/Register') {
             return import('./Pages/Auth/Register.vue');
+        } else if (name.startsWith('Settings/')) {
+            // Handle any Settings sub-pages dynamically
+            const pageName = name.replace('Settings/', '');
+            return import(`./Pages/Settings/${pageName}.vue`);
+        } else if (name === 'Settings') {
+            // Import the Index.vue for the Settings page
+            return import('./Pages/Settings/Index.vue');
         } else {
             return import(`./Pages/${name}.vue`);
         }
